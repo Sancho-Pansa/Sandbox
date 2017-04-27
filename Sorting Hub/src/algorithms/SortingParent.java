@@ -1,7 +1,8 @@
 package algorithms;
 
-public class SortingParent 
+public abstract class SortingParent
 {
+	
 	protected int sortArray[];
 	
 	public SortingParent()

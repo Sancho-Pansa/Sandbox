@@ -11,7 +11,6 @@ public class MainClass
 	
 	public MainClass(int volume, int code)
 	{
-		//volume = 10;
 		this.sortingCode = code;
 		sortArray = new int [volume];
 		for(int i = 0; i < volume; i++)
