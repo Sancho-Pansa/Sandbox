@@ -11,133 +11,186 @@ import java.lang.StackOverflowError;
  * @author SanchoPansa
  * 
  * @param <T>
- * @version 1.0
+ * @version 2.0
  */
 
 public class CircularLinkedList<T>
 {
-	private StackOverflowError overflowException = new StackOverflowError("Index overflow");
+	private transient Node<T> firstNode;
+	private transient Node<T> lastNode;
 	
-	private Node<T> firstNode;
-	private Node<T> lastNode;
-	private Node<T> nodeCursor;
-	
-	private boolean isClear = true;
-	
-	private int size = 0;
+	private transient int size = 0;
 	
 	public CircularLinkedList()
 	{
-		
+		//Do nothing
 	}
 	
-	/**
-	 * Pushes next element into the list 
-	 * @param t
-	 */
-	public void push(T t)
+	private void linkFirst(T t)
 	{
-		if(isClear)
+		final Node<T> f = this.firstNode;
+		final Node<T> l = this.lastNode;
+		
+		final Node<T> newNode = new Node<>(l, t, f);
+		firstNode = newNode;
+		if(f == null || l == null)
 		{
-			isClear = false;
-			firstNode = new Node<T>(t);
-			firstNode.backward = firstNode;
-			firstNode.forward = firstNode;
-			lastNode = firstNode;
+			newNode.forward = newNode;
+			newNode.backward = newNode;
+			lastNode = newNode;
 		}
 		else
 		{
-			Node<T> addingNode = new Node<>(t);
-			addingNode.backward = lastNode;
-			lastNode.forward = addingNode;
-			addingNode.forward = firstNode;
-			firstNode.backward = addingNode;
-			lastNode = addingNode;
+			f.backward = newNode;
+			lastNode.forward = newNode;
 		}
-		nodeCursor = lastNode;
 		size++;
 	}
 	
-	/**
-	 * Inserts element as first element of list
-	 * @param t
-	 */
+	private void linkLast(T t)
+	{
+		final Node<T> f = this.firstNode;
+		final Node<T> l = this.lastNode;
+		
+		final Node<T> newNode = new Node<>(l, t, f);
+		lastNode = newNode;
+		if(f == null || l == null)
+		{
+			newNode.backward = newNode;
+			newNode.forward = newNode;
+			firstNode = newNode;
+			lastNode = newNode;
+		}
+		else
+		{
+			firstNode.backward = newNode;
+			l.forward = newNode;
+		}
+		size++;
+	}
+	
+	private void linkBefore(T t, Node<T> succeed)
+	{
+		final Node<T> previous = succeed.backward;
+		final Node<T> newNode = new Node<>(previous, t, succeed);
+		succeed.backward = newNode;
+		if(previous == null)
+		{
+			linkFirst(t);
+		}
+		else
+		{
+			previous.forward = newNode;
+		}
+		size++;
+	}
+	
+	private T unlinkFirst(Node<T> f)
+	{
+		final T element = f.content;
+		final Node<T> next = f.forward;
+		firstNode = next;
+		if(next == f)
+		{
+			firstNode = null;
+			lastNode = null;
+		}
+		else
+		{
+			f.content = null;
+			f.backward = null;
+			f.forward = null;
+			firstNode.backward = lastNode;
+			lastNode.forward = firstNode;
+		}
+		size--;
+		return element;
+	}
+	
+	private T unlinkLast(Node<T> l)
+	{
+		final T element = l.content;
+		final Node<T> prev = l.backward;
+		lastNode = prev;
+		if(prev == l)
+		{
+			firstNode = null;
+			lastNode = null;
+		}
+		else
+		{
+			l.content = null;
+			l.backward = null;
+			l.forward = null;
+			firstNode.backward = lastNode;
+			lastNode.forward = firstNode;
+		}
+		size--;
+		return element;
+	}
+	
+	private T unlink(Node<T> c)			// c stands for "chosenNode"
+	{
+		final T element = c.content;
+		final Node<T> prev = c.backward;
+		final Node<T> next = c.forward;
+		
+		if(prev == c)
+		{
+			firstNode = null;
+			lastNode = null;
+		}
+		else 
+		{
+			prev.forward = next;
+			next.backward = prev;
+			c.forward = null;
+			c.backward = null;
+		}
+		c.content = null;
+		size--;
+		return element;
+	}
+	
 	public void addFirst(T t)
 	{
-		Node<T> addingNode = new Node<>(t);
-		addingNode.forward = firstNode;
-		firstNode.backward = addingNode;
-		
-		addingNode.backward = lastNode;
-		lastNode.forward = addingNode;
-		
-		firstNode = addingNode;
-		
-		size++;
+		linkFirst(t);
 	}
 	
-	/**
-	 * Inserts element on specified index
-	 * @param t
-	 * @param index
-	 */
-	public void add(T t, int index)
+	public T removeFirst()
 	{
-		if(index > size)
-		{
-			throw overflowException;
-		}
-		
-		int iterator = 0;
-		nodeCursor = firstNode;
-		while(iterator != index)
-		{
-			nodeCursor = nodeCursor.forward;
-			iterator++;
-		}
-		
-		Node<T> addingNode = new Node<>(t);
-		
-		addingNode.backward = nodeCursor.backward;
-		addingNode.forward = nodeCursor;
-		
-		nodeCursor.backward.forward = addingNode;
-		nodeCursor.backward = addingNode;
-		
-		size++;
+		final Node<T> f = firstNode;
+		if(f == null)
+			throw new NoSuchElementException();
+		return unlinkFirst(f);
 	}
 	
-	/**
-	 * Inserts element on specified index
-	 * @return
-	 */
 	public T pop()
 	{
-		T t = lastNode.getContent();
-		firstNode.backward = lastNode.backward;
-		lastNode = lastNode.backward;
-		lastNode.forward = firstNode;
-		
-		size--;
-		return t;
+		return removeFirst();
 	}
 	
-	/**
-	 * Returns last element of circular list, but do not removes it as pop()
-	 * @return
-	 * @throws NoSuchElementException
-	 */
-	public T getLast() throws NoSuchElementException
+	public void push(T t)
 	{
-		return lastNode.getContent();
+		addFirst(t);
 	}
-
-	/**
-	 * Returns size of list
-	 * @return
-	 */
-	public int size() 
+	
+	public int size()
 	{
-		return size;
+		return this.size;
+	}
+	
+	private static class Node<T>
+	{
+		private T content;
+		private Node<T> backward;
+		private Node<T> forward;
+		
+		Node(Node<T> prev, T elem, Node<T> next)
+		{
+			this.backward = prev;
+			this.content = elem;
+			this.forward = next;
+		}
 	}
 }
