@@ -1,7 +1,6 @@
 package main;
 
 import java.util.*;
-import java.lang.StackOverflowError;
 
 /**
  * This class is used to create circular linked list.
@@ -152,11 +151,72 @@ public class CircularLinkedList<T>
 		return element;
 	}
 	
+	private Node<T> createNodeAt(int index)
+	{
+		if(index < (size >> 1))
+		{
+			Node<T> newNode = this.firstNode;
+			for(int i = 0; i < index; i++)
+				newNode = newNode.forward;
+			return newNode;
+		}
+		else
+		{
+			Node<T> newNode = this.lastNode;
+			for(int i = size - 1; i > index; i--)
+				newNode = newNode.backward;
+			return newNode;
+		}
+		
+	}
+	
+	private boolean isPositionIndex(int index)
+	{
+		return index >=0 && index <= this.size;
+	}
+	
+	private String getOutOfBoundsMsg(int index)
+	{
+		return "Index " + index + " exceeds size of stack (" + this.size + ")"; 
+	}
+	
+	/*
+	 * Private methods end here
+	 * 
+	 * Public methods start here
+	 */
+	
+	/*
+	 * Adding methods start here
+	 */
 	public void addFirst(T t)
 	{
 		linkFirst(t);
 	}
 	
+	public void addLast(T t)
+	{
+		linkLast(t);
+	}
+	
+	public void addAt(int index, T t)
+	{
+		if(!this.isPositionIndex(index))
+			throw new IndexOutOfBoundsException(this.getOutOfBoundsMsg(index));
+		if(index == size)
+			linkLast(t);
+		else
+			linkBefore(t, createNodeAt(index));
+	}
+
+	public void push(T t)
+	{
+		addFirst(t);
+	}
+	
+	/*
+	 * Remove methods start here
+	 */
 	public T removeFirst()
 	{
 		final Node<T> f = firstNode;
@@ -165,19 +225,35 @@ public class CircularLinkedList<T>
 		return unlinkFirst(f);
 	}
 	
+	public T removeLast()
+	{
+		final Node<T> l = lastNode;
+		if(l == null)
+			throw new NoSuchElementException();
+		return unlinkLast(l);
+	}
+	
+	public T removeAt(int index)
+	{
+		if(!this.isPositionIndex(index))
+			throw new IndexOutOfBoundsException(this.getOutOfBoundsMsg(index));
+		return unlink(createNodeAt(index));
+			
+	}
+	
 	public T pop()
 	{
 		return removeFirst();
 	}
 	
-	public void push(T t)
-	{
-		addFirst(t);
-	}
-	
 	public int size()
 	{
 		return this.size;
+	}
+	
+	public boolean isEmpty()
+	{
+		return this.firstNode == null || this.lastNode == null;
 	}
 	
 	private static class Node<T>

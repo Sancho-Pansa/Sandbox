@@ -7,14 +7,19 @@ public class MainClass
 	{
 		// Demonstration of Circular Linked List
 		CircularLinkedList<Integer> list = new CircularLinkedList<>();
+		System.out.println(list.isEmpty());
 		for(int i = 0; i < 10; i++)
 		{
 			list.push((int) (Math.random() * 100));
-		}
-		for(int i = 0; i < 10; i++)
+		}	
+		list.addLast(-15);
+		list.addAt(5, -4);
+		list.removeAt(list.size());
+		while(list.size() != 0)
 		{
 			System.out.print(list.pop());
-			System.out.println("\t" + list.size());
+			System.out.print("\t" + list.size());
+			System.out.println("\t" + list.isEmpty());
 		}
 	}
 
