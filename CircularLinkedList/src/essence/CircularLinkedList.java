@@ -1,4 +1,4 @@
-package main;
+package essence;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ import java.util.*;
  * @author SanchoPansa
  * 
  * @param <T>
- * @version 2.0
+ * @version 2.1
  */
 
 public class CircularLinkedList<T>
@@ -212,6 +212,30 @@ public class CircularLinkedList<T>
 	public void push(T t)
 	{
 		addFirst(t);
+	}
+	
+	public T getAt(int index)
+	{
+		if(!this.isPositionIndex(index))
+			throw new IndexOutOfBoundsException(this.getOutOfBoundsMsg(index));
+		Node<T> node = firstNode;
+		int i = 0;
+		while(i < index)
+		{
+			node = node.forward;
+			i++;
+		}
+		return node.content;
+	}
+	
+	public T getFirst()
+	{
+		return firstNode.content;
+	}
+	
+	public T getLast()
+	{
+		return lastNode.content;
 	}
 	
 	/*
