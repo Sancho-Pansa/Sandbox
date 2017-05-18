@@ -151,23 +151,28 @@ public class CircularLinkedList<T>
 		return element;
 	}
 	
-	private Node<T> createNodeAt(int index)
+	private Node<T> getNodeAt(int index)
 	{
 		if(index < (size >> 1))
 		{
-			Node<T> newNode = this.firstNode;
+			Node<T> searchNode = this.firstNode;
 			for(int i = 0; i < index; i++)
-				newNode = newNode.forward;
-			return newNode;
+				searchNode = searchNode.forward;
+			return searchNode;
 		}
 		else
 		{
 			Node<T> newNode = this.lastNode;
-			for(int i = size - 1; i > index; i--)
+			for(int i = this.size; i > index; i--)
 				newNode = newNode.backward;
 			return newNode;
 		}
 		
+	}
+	
+	private void replaceContent(T t, Node<T> node)
+	{
+		node.content = t;
 	}
 	
 	private boolean isPositionIndex(int index)
@@ -220,7 +225,7 @@ public class CircularLinkedList<T>
 		if(index == size)
 			linkLast(t);
 		else
-			linkBefore(t, createNodeAt(index));
+			linkBefore(t, getNodeAt(index));
 	}
 
 	/**
@@ -240,15 +245,7 @@ public class CircularLinkedList<T>
 	 */
 	public T getAt(int index)
 	{
-		if(!this.isPositionIndex(index))
-			throw new IndexOutOfBoundsException(this.getOutOfBoundsMsg(index));
-		Node<T> node = firstNode;
-		int i = 0;
-		while(i < index)
-		{
-			node = node.forward;
-			i++;
-		}
+		final Node<T> node = this.getNodeAt(index);
 		return node.content;
 	}
 	
@@ -307,7 +304,7 @@ public class CircularLinkedList<T>
 	{
 		if(!this.isPositionIndex(index))
 			throw new IndexOutOfBoundsException(this.getOutOfBoundsMsg(index));
-		return unlink(createNodeAt(index));
+		return unlink(getNodeAt(index));
 			
 	}
 	
