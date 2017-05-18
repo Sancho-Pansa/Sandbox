@@ -189,16 +189,30 @@ public class CircularLinkedList<T>
 	/*
 	 * Adding methods start here
 	 */
+	/**
+	 * Adds an element at the head of list (after the last added element)
+	 * @param t
+	 */
 	public void addFirst(T t)
 	{
 		linkFirst(t);
 	}
 	
+	/**
+	 * Adds an element at the end of the list (before the first added element)
+	 * @param t
+	 */
 	public void addLast(T t)
 	{
 		linkLast(t);
 	}
 	
+	/**
+	 * Adds element on specified index
+	 * @throws IndexOutOfBoundsException
+	 * @param index
+	 * @param t
+	 */
 	public void addAt(int index, T t)
 	{
 		if(!this.isPositionIndex(index))
@@ -209,11 +223,21 @@ public class CircularLinkedList<T>
 			linkBefore(t, createNodeAt(index));
 	}
 
+	/**
+	 * Pushes element into the beginning of the list.
+	 * Don't forget, that stacks use LIFO system.
+	 * @param t
+	 */
 	public void push(T t)
 	{
 		addFirst(t);
 	}
 	
+	/**
+	 * Returns, but no pops element on specified index
+	 * @param index
+	 * @return
+	 */
 	public T getAt(int index)
 	{
 		if(!this.isPositionIndex(index))
@@ -228,11 +252,19 @@ public class CircularLinkedList<T>
 		return node.content;
 	}
 	
+	/**
+	 * Returns, but not pops the first element (the last added)
+	 * @return
+	 */
 	public T getFirst()
 	{
 		return firstNode.content;
 	}
 	
+	/**
+	 * Returns, but not removes the first added element (the last element)
+	 * @return
+	 */
 	public T getLast()
 	{
 		return lastNode.content;
@@ -240,6 +272,10 @@ public class CircularLinkedList<T>
 	
 	/*
 	 * Remove methods start here
+	 */
+	/**
+	 * Removes the first element from the list. Equivalent to pop() method.
+	 * @return
 	 */
 	public T removeFirst()
 	{
@@ -249,6 +285,10 @@ public class CircularLinkedList<T>
 		return unlinkFirst(f);
 	}
 	
+	/**
+	 * Removes the first added element from the list (the last element of list)
+	 * @return
+	 */
 	public T removeLast()
 	{
 		final Node<T> l = lastNode;
@@ -257,6 +297,12 @@ public class CircularLinkedList<T>
 		return unlinkLast(l);
 	}
 	
+	/**
+	 * Removes element on specified index
+	 * @throws IndexOutOfBoundsException
+	 * @param index
+	 * @return
+	 */
 	public T removeAt(int index)
 	{
 		if(!this.isPositionIndex(index))
@@ -265,19 +311,44 @@ public class CircularLinkedList<T>
 			
 	}
 	
+	/**
+	 * Pops the first element from the list
+	 * @return
+	 */
 	public T pop()
 	{
 		return removeFirst();
 	}
-	
+	/**
+	 * Returns the size of list.
+	 * Initial size of list is 0
+	 * @return
+	 */
 	public int size()
 	{
 		return this.size;
 	}
 	
+	/**
+	 * Returns whether this list contains any element.
+	 * @return
+	 */
 	public boolean isEmpty()
 	{
 		return this.firstNode == null || this.lastNode == null;
+	}
+	
+	public void clear()
+	{
+		for(Node<T> x = firstNode; x != null; )
+		{
+			Node<T> next = x.forward;
+			x.backward = null;
+			x.content = null;
+			x.forward = null;
+			x = next;
+		}
+		this.size = 0;
 	}
 	
 	private static class Node<T>
