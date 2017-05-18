@@ -170,11 +170,6 @@ public class CircularLinkedList<T>
 		
 	}
 	
-	private void replaceContent(T t, Node<T> node)
-	{
-		node.content = t;
-	}
-	
 	private boolean isPositionIndex(int index)
 	{
 		return index >=0 && index <= this.size;
@@ -377,6 +372,30 @@ public class CircularLinkedList<T>
 			x = next;
 		}
 		this.size = 0;
+	}
+	
+	/**
+	 * Scrolls circular list to one position clockwise
+	 * i.e. first become second, second become third ... last become first
+	 */
+	public void scroll()
+	{
+		T temp = firstNode.content;
+		for(int i = 0; i < this.size; i++)
+		{
+			this.getAt(i).content = this.getAt(i).forward.content;
+		}
+		lastNode.content = temp;
+		/*T temp = firstNode.content; 
+		final Node<T> editNode = firstNode;
+		Node <T> cursorNode = editNode;
+		while(cursorNode != this.lastNode)
+		{
+			temp = cursorNode.content;
+			cursorNode.content = temp;
+			cursorNode = cursorNode.backward;
+		}
+		cursorNode.content = temp;*/
 	}
 	
 	private static class Node<T>
