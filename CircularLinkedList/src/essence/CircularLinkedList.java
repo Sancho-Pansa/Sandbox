@@ -243,28 +243,28 @@ public class CircularLinkedList<T>
 	 * @param index
 	 * @return
 	 */
-	public T getAt(int index)
+	public Node<T> getAt(int index)
 	{
 		final Node<T> node = this.getNodeAt(index);
-		return node.content;
+		return node;
 	}
 	
 	/**
-	 * Returns, but not pops the first element (the last added)
+	 * Returns, but not pops the first Node (the last added)
 	 * @return
 	 */
-	public T getFirst()
+	public Node<T> getFirst()
 	{
-		return firstNode.content;
+		return firstNode;
 	}
 	
 	/**
-	 * Returns, but not removes the first added element (the last element)
+	 * Returns, but not removes the first added Node (the last element)
 	 * @return
 	 */
-	public T getLast()
+	public Node<T> getLast()
 	{
-		return lastNode.content;
+		return lastNode;
 	}
 	
 	/*
@@ -316,6 +316,37 @@ public class CircularLinkedList<T>
 	{
 		return removeFirst();
 	}
+	
+	/**
+	 * Returns content of Node (type: {@link T}) 
+	 * @param node
+	 * @return
+	 */
+	public T getContent(Node<T> node)
+	{
+		return node.content;
+	}
+	
+	/**
+	 * Returns preceding Node
+	 * @param node
+	 * @return
+	 */
+	public Node<T> getPrevious(Node<T> node)
+	{
+		return node.backward;
+	}
+	
+	/**
+	 * Returns succeeding Node
+	 * @param node
+	 * @return
+	 */
+	public Node<T> getNext(Node<T> node)
+	{
+		return node.forward;
+	}
+	
 	/**
 	 * Returns the size of list.
 	 * Initial size of list is 0
