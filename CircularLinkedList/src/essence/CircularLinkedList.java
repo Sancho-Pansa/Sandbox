@@ -348,6 +348,20 @@ public class CircularLinkedList<T>
 	}
 	
 	/**
+	 * Scrolls circular list to the one node counter-clockwise
+	 * (i.e. first become second, second  third ... last become first
+	 */
+	public void scroll()
+	{
+		Node<T> scrollNode = firstNode;
+		for(int i = 0; i < this.size; i++)
+		{
+			
+		}
+	}
+	
+	
+	/**
 	 * Returns the size of list.
 	 * Initial size of list is 0
 	 * @return
