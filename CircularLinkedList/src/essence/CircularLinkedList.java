@@ -341,21 +341,6 @@ public class CircularLinkedList<T>
 	{
 		return node.forward;
 	}
-	
-	/**
-	 * Scrolls circular list to the one node counter-clockwise
-	 * (i.e. first become second, second  third ... last become first
-	 */
-	public void scroll()
-	{
-		Node<T> scrollNode = firstNode;
-		for(int i = 0; i < this.size; i++)
-		{
-			
-		}
-	}
-	
-	
 	/**
 	 * Returns the size of list.
 	 * Initial size of list is 0
@@ -400,16 +385,6 @@ public class CircularLinkedList<T>
 			this.getAt(i).content = this.getAt(i).forward.content;
 		}
 		lastNode.content = temp;
-		/*T temp = firstNode.content; 
-		final Node<T> editNode = firstNode;
-		Node <T> cursorNode = editNode;
-		while(cursorNode != this.lastNode)
-		{
-			temp = cursorNode.content;
-			cursorNode.content = temp;
-			cursorNode = cursorNode.backward;
-		}
-		cursorNode.content = temp;*/
 	}
 	
 	private static class Node<T>
