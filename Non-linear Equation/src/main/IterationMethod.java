@@ -17,7 +17,7 @@ public abstract class IterationMethod
 	protected double function(double x)
 	{
 		reqNum++;
-		return pow((x - 0.2), 3.0);
+		return pow(2.0, (x - 0.1)) - 1;
 	}
 	
 	public int getNumberOfRequests()

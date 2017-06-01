@@ -10,7 +10,7 @@ public class TestClass {
 		double startingPoint = 1;
 		
 		Bisection first = new Bisection(0, startingPoint, precision);
-		FixedPointIteration second = new FixedPointIteration(0.2, precision);
+		FixedPointIteration second = new FixedPointIteration(1.2, precision);
 		NewtonMethod third = new NewtonMethod(precision);
 		SecantMethod forth = new SecantMethod(precision);
 		
