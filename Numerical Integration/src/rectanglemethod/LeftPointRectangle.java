@@ -1,6 +1,8 @@
 package rectanglemethod;
 
-public class LeftPointRectangle extends AbstractRectangleMethod
+import main.AbstractIntegrationMethod;
+
+public class LeftPointRectangle extends AbstractIntegrationMethod
 {	
 	public LeftPointRectangle()
 	{
