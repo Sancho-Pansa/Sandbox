@@ -55,7 +55,7 @@ public abstract class AbstractIntegrationMethod
 	
 	protected double function(double x)
 	{
-		return pow(x, 1.0);
+		return pow(x, 2.0);
 	}
 	
 	protected void integralSummation()

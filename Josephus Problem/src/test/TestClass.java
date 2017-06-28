@@ -6,8 +6,8 @@ public class TestClass {
 
 	public static void main(String[] args) 
 	{
-		JosephusProblem dummy = new JosephusProblem(16);
-		dummy.setPeriod(5);
+		JosephusProblem dummy = new JosephusProblem(15);
+		dummy.setPeriod(4);
 		dummy.decimation();
 	}
 

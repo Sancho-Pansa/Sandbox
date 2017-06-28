@@ -7,7 +7,7 @@ public class TestClass {
 
 	public static void main(String[] args) 
 	{
-		TrapezoidalMethod dummy = new TrapezoidalMethod(0.0, 2.0, 1);
+		SimpsonMethod dummy = new SimpsonMethod(0.0, 2.0, 0.01);
 		System.out.println(dummy.countIntegral());
 	}
 
