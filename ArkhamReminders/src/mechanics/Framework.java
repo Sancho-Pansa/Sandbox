@@ -2,9 +2,12 @@ package mechanics;
 
 import java.util.Scanner;
 
+import essence.CircularLinkedList;
+
 public class Framework 
 {
 	private int players;
+	private CircularLinkedList<Investigator> cll;
 	
 	public Framework(int players)
 	{
@@ -23,5 +26,18 @@ public class Framework
 		this.players = players;
 	}
 	
-	
+	public void setInvestigators()
+	{
+		this.cll = new CircularLinkedList<>();
+		Scanner in = new Scanner(System.in);
+		for(int i = 0; i < this.players; i++)
+		{
+			Investigator invest = new Investigator(in.nextLine());
+			cll.addFirst(invest);
+		}
+		in.close();
+		cll.scroll();
+		while(!cll.isEmpty())
+			System.out.println(cll.pop().getSanity());
+	}
 }
