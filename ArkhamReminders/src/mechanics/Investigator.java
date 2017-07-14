@@ -9,7 +9,8 @@ import sql.AccessDBConnect;
  */
 public class Investigator 
 {
-	private static AccessDBConnect accdb = new AccessDBConnect();
+	//NB Эта переменная static final, но поля внутри неё могут меняться (если им не прописать final).
+	public final static AccessDBConnect ACCDB = new AccessDBConnect();
 	
 	private final String name;
 	private int health;
@@ -19,8 +20,9 @@ public class Investigator
 	public Investigator(String name)
 	{
 		this.name = name;
-		this.health = new Integer(accdb.getField("Health", name));
-		this.sanity = new Integer(accdb.getField("Sanity", name));
+		this.health = new Integer(ACCDB.getField("Health", name));
+		this.sanity = new Integer(ACCDB.getField("Sanity", name));
+		this.money = new Integer(ACCDB.getField("InitMoney", name));
 	}
 
 	public String getName() {

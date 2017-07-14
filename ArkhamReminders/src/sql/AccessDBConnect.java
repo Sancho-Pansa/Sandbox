@@ -3,6 +3,15 @@ package sql;
 import java.io.File;
 import java.sql.*;
 
+/**
+ * This class creates connection with MS Access database on selected address
+ * Its only method emulates SELECT query to database in order to get Investigators features
+ * This class uses UCanAccess Driver to connect to MS Access as JDBC Driver do not support this operation
+ * in Java SE 8
+ * @author SanchoPansa
+ *
+ */
+//TODO Связать с помощью Мавена(?)
 public class AccessDBConnect 
 {
 	private Connection con;
