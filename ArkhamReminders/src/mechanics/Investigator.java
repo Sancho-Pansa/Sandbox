@@ -9,10 +9,15 @@ import sql.AccessDBConnect;
  */
 public class Investigator 
 {
-	//NB Эта переменная static final, но поля внутри неё могут меняться (если им не прописать final).
+	//NB: Эта переменная static final, но поля внутри неё могут меняться (если им не прописать final).
 	public final static AccessDBConnect ACCDB = new AccessDBConnect();
 	
 	private final String name;
+	private final int maxHealth;
+	private final int maxSanity;
+	private final int initMoney;
+	private byte blessing = 0;
+	
 	private int health;
 	private int sanity;
 	private int money;
@@ -20,13 +25,17 @@ public class Investigator
 	public Investigator(String name)
 	{
 		this.name = name;
-		this.health = new Integer(ACCDB.getField("Health", name));
-		this.sanity = new Integer(ACCDB.getField("Sanity", name));
-		this.money = new Integer(ACCDB.getField("InitMoney", name));
+		this.maxHealth = new Integer(ACCDB.getInvestField("Health", name));
+		this.maxSanity = new Integer(ACCDB.getInvestField("Sanity", name));
+		this.initMoney = new Integer(ACCDB.getInvestField("InitMoney", name));
+	}
+	
+	public int getHealth() {
+		return health;
 	}
 
-	public String getName() {
-		return name;
+	public void setHealth(int health) {
+		this.health = health;
 	}
 
 	public int getSanity() {
@@ -45,7 +54,29 @@ public class Investigator
 		this.money = money;
 	}
 
-	public int getHealth() {
-		return health;
+	public String getName() {
+		return name;
+	}
+
+	public int getMaxHealth() {
+		return maxHealth;
+	}
+
+	public int getMaxSanity() {
+		return maxSanity;
+	}
+
+	public int getInitMoney() {
+		return initMoney;
+	}
+
+	public boolean isBlessed()
+	{
+		return this.blessing == 1;
+	}
+	
+	public boolean isCursed()
+	{
+		return this.blessing == -1;
 	}
 }

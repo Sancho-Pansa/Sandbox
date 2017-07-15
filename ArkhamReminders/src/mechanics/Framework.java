@@ -8,6 +8,7 @@ public class Framework
 {
 	private int players;
 	private CircularLinkedList<Investigator> cll;
+	private AncientOne ancientOne;
 	
 	public Framework(int players)
 	{
@@ -39,5 +40,17 @@ public class Framework
 		cll.scroll();
 		while(!cll.isEmpty())
 			System.out.println(cll.pop().getSanity());
+	}
+	
+	public void setAncientOne()
+	{
+		Scanner in = new Scanner(System.in);
+		this.ancientOne = new AncientOne(in.nextLine());
+		in.close();
+	}
+	
+	public AncientOne getAncientOne()
+	{
+		return this.ancientOne;
 	}
 }

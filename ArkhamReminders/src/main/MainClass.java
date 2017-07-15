@@ -8,6 +8,8 @@ public class MainClass
 	public static void main(String[] args)
 	{
 		Framework fw = new Framework(4);
-		fw.setInvestigators();
+		//fw.setInvestigators();
+		fw.setAncientOne();
+		System.out.println(fw.getAncientOne().getAwakening());
 	}
 }

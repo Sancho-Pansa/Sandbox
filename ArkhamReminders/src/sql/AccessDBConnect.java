@@ -31,19 +31,30 @@ public class AccessDBConnect
 		}
 	}
 	
-	public String getField(String fieldName, String investName)
+	public String getInvestField(String fieldName, String investName)
 	{
-		
 		try {
-			
 			this.rSet = s.executeQuery("SELECT " + fieldName + " FROM Investigators WHERE InvestName='" + investName + "'");
 			rSet.next();
 			return rSet.getString(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Exception in Investigators table");
 			e.printStackTrace();
 		}
-		return "0";
+		return null;
+	}
+	
+	public String getAncientField(String fieldName, String ancientName)
+	{
+		try {
+			this.rSet = s.executeQuery("SELECT " + fieldName + " FROM AncientOnes WHERE AncientName='" + ancientName + "'");
+			this.rSet.next();
+			return rSet.getString(1);
+		} catch (SQLException e) {
+			System.out.println("Exception in AncientOnes table");
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void endConnection()
