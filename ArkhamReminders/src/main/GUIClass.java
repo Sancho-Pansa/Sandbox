@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -59,7 +60,7 @@ public class GUIClass extends Application
 		label.setFont(new Font(32));
 		label.setPadding(new Insets(50, 0, 0, 200));
 		
-		gPane.add(new Label("Number of players:"), 0, 0);
+		gPane.add(new Label("Число игроков:"), 0, 0);
 		gPane.add(playerNumField, 1, 0);
 		gPane.add(playerBtn, 1, 1);
 		gPane.setVgap(20);
@@ -87,6 +88,40 @@ public class GUIClass extends Application
 	{
 		bPane = new BorderPane();
 		gPane = new GridPane();
+		ArrayList<Label> ARLabel = new ArrayList<>();
+		ArrayList<TextArea> ARtext = new ArrayList<>();
+		
+		label = new Label("Введите имена сыщиков и Древнего");
+		label.setFont(new Font(24));
+		label.setPadding(new Insets(20, 20, 40, 500));
+		
+		for(int i = 0; i < fw.getPlayers(); i++)
+		{
+			ARLabel.add(new Label("Игрок " + (i + 1) + ": "));
+			gPane.add(ARLabel.get(i), 0, i);
+			TextArea dummy = new TextArea();
+			dummy.setMaxHeight(35);
+			dummy.setMinHeight(35);
+			ARtext.add(dummy);
+			gPane.add(ARtext.get(i), 1, i);
+		}		
+
+		gPane.add(new Label("Древний: "), 0, fw.getPlayers() + 10);
+		TextArea ancientTArea = new TextArea();
+		ancientTArea.setMaxHeight(35);
+		ancientTArea.setMinHeight(35);
+		gPane.add(ancientTArea, 1, fw.getPlayers() + 10);
+		
+		
+		
+		gPane.setVgap(10);
+		gPane.setHgap(20);
+		gPane.setAlignment(Pos.TOP_CENTER);
+		
+		bPane.setTop(label);
+		bPane.setCenter(gPane);
+		bPane.setBorder(new Border((new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1, 0, 0, 0)))));
+		scene.setRoot(bPane);
 	}
 	
 	private void createMainWindow()
@@ -107,7 +142,7 @@ public class GUIClass extends Application
 	
 	private void arrangeRightBorderPane()
 	{
-		ArrayList<Label> ARLabel = new ArrayList<>();
+		
 		bPane = new BorderPane();
 		
 	}
