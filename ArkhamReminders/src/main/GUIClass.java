@@ -29,9 +29,15 @@ public class GUIClass extends Application
 	private HBox bigBox;
 	
 	private TextField playerNumField;
-	private Button playerBtn;
+	private Button okButton;
 	
 	private Framework fw;
+	
+	// These variable are used in player name window
+	
+	ArrayList<Label> ARLabel;
+	ArrayList<TextArea> ARtext = new ArrayList<>();
+	TextArea ancientTArea;
 	
 	// These variable are for main window (after input of players)
 	private SplitPane sPane;
@@ -41,19 +47,25 @@ public class GUIClass extends Application
 	private GridPane innerPane1;
 	private GridPane innerPane2;
 	
+	private BorderPane upkeepPane;
+	private BorderPane movementPane;
+	private BorderPane encounterPane;
+	private BorderPane otherWorldPane;
+	private BorderPane mythosPane;
+	
 	@Override
 	public void start(Stage primaryStage)
 	{
 		bPane = new BorderPane();
 		gPane = new GridPane();
 		gPane.setMaxSize(500, 50);
-		
-		playerNumField = new TextField();
+		//TODO Delete this number after tests!
+		playerNumField = new TextField("1");
 		playerNumField.setMaxHeight(50);
 		
-		playerBtn = new Button("OK");
-		playerBtn.setMinWidth(100);
-		playerBtn.setOnAction(this::PlayerNumEntered);
+		okButton = new Button("OK");
+		okButton.setMinWidth(100);
+		okButton.setOnAction(this::PlayerNumEntered);
 		
 		label = new Label("Добро пожаловать в Arkham Reminders. Введите число игроков.");
 		label.setTextAlignment(TextAlignment.CENTER);
@@ -62,7 +74,7 @@ public class GUIClass extends Application
 		
 		gPane.add(new Label("Число игроков:"), 0, 0);
 		gPane.add(playerNumField, 1, 0);
-		gPane.add(playerBtn, 1, 1);
+		gPane.add(okButton, 1, 1);
 		gPane.setVgap(20);
 		gPane.setHgap(10);
 		
@@ -88,18 +100,20 @@ public class GUIClass extends Application
 	{
 		bPane = new BorderPane();
 		gPane = new GridPane();
-		ArrayList<Label> ARLabel = new ArrayList<>();
-		ArrayList<TextArea> ARtext = new ArrayList<>();
 		
 		label = new Label("Введите имена сыщиков и Древнего");
 		label.setFont(new Font(24));
 		label.setPadding(new Insets(20, 20, 40, 500));
 		
+		ARLabel = new ArrayList<>();
+		ancientTArea = new TextArea("Йог-Сотот");
+		 
 		for(int i = 0; i < fw.getPlayers(); i++)
 		{
 			ARLabel.add(new Label("Игрок " + (i + 1) + ": "));
 			gPane.add(ARLabel.get(i), 0, i);
-			TextArea dummy = new TextArea();
+			//TODO Delete string in constructor after tests!
+			TextArea dummy = new TextArea("Аманда");
 			dummy.setMaxHeight(35);
 			dummy.setMinHeight(35);
 			ARtext.add(dummy);
@@ -107,12 +121,16 @@ public class GUIClass extends Application
 		}		
 
 		gPane.add(new Label("Древний: "), 0, fw.getPlayers() + 10);
-		TextArea ancientTArea = new TextArea();
 		ancientTArea.setMaxHeight(35);
 		ancientTArea.setMinHeight(35);
 		gPane.add(ancientTArea, 1, fw.getPlayers() + 10);
 		
-		
+		okButton = new Button("OK");
+		Button backBtn = new Button("Назад");
+		okButton.setOnAction(this::playerNamesEntered);
+		backBtn.setOnAction(this::backPressed);
+		gPane.add(backBtn, 0, fw.getPlayers() + 11);
+		gPane.add(okButton, 1, fw.getPlayers() + 11);
 		
 		gPane.setVgap(10);
 		gPane.setHgap(20);
@@ -127,14 +145,17 @@ public class GUIClass extends Application
 	private void createMainWindow()
 	{
 		bigBox = new HBox();
-		
-		this.arrangeRightBorderPane();
+		bPane = new BorderPane();
 		this.arrangeAccordion();
 		
 		sPane = new SplitPane(accord, bPane);
+		this.arrangeRightBorderPane();
 		
 		bigBox.getChildren().add(sPane);
 		bigBox.setBorder(new Border((new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1, 0, 0, 0)))));
+		
+		
+		
 		scene = new Scene(bigBox, WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -143,7 +164,7 @@ public class GUIClass extends Application
 	private void arrangeRightBorderPane()
 	{
 		
-		bPane = new BorderPane();
+		
 		
 	}
 	
@@ -167,5 +188,25 @@ public class GUIClass extends Application
 				fw = new Framework(new Integer(playerNumField.getText()));
 				inputInvestigatorsWindow();
 			}
+	}
+	
+	private void playerNamesEntered(ActionEvent event)
+	{
+		ArrayList<String> dummy = new ArrayList<>();
+		for(TextArea x : this.ARtext)
+		{
+			if(x.getText().isEmpty() || this.ancientTArea.getText().isEmpty())
+				return;
+			dummy.add(x.getText());
+		}
+		
+		fw.setInvestigators(dummy);
+		fw.setAncientOne(this.ancientTArea.getText());
+		this.createMainWindow();
+	}
+	
+	private void backPressed(ActionEvent event)
+	{
+		this.start(primaryStage);
 	}
 }

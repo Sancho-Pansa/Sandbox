@@ -1,5 +1,6 @@
 package mechanics;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import essence.CircularLinkedList;
@@ -27,26 +28,19 @@ public class Framework
 		this.players = players;
 	}
 	
-	public void setInvestigators()
+	public void setInvestigators(ArrayList<String> names)
 	{
 		this.cll = new CircularLinkedList<>();
-		Scanner in = new Scanner(System.in);
-		for(int i = 0; i < this.players; i++)
+		for(String x : names)
 		{
-			Investigator invest = new Investigator(in.nextLine());
-			cll.addFirst(invest);
+			cll.push(new Investigator(x));
 		}
-		in.close();
-		cll.scroll();
-		while(!cll.isEmpty())
-			System.out.println(cll.pop().getSanity());
+		System.out.println(cll.pop().getMaxHealth());
 	}
 	
-	public void setAncientOne()
+	public void setAncientOne(String name)
 	{
-		Scanner in = new Scanner(System.in);
-		this.ancientOne = new AncientOne(in.nextLine());
-		in.close();
+		this.ancientOne = new AncientOne(name);
 	}
 	
 	public AncientOne getAncientOne()

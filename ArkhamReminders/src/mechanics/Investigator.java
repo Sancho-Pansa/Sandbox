@@ -26,8 +26,11 @@ public class Investigator
 	{
 		this.name = name;
 		this.maxHealth = new Integer(ACCDB.getInvestField("Health", name));
+		this.health = this.maxHealth;
 		this.maxSanity = new Integer(ACCDB.getInvestField("Sanity", name));
+		this.sanity = this.maxSanity;
 		this.initMoney = new Integer(ACCDB.getInvestField("InitMoney", name));
+		this.money = this.initMoney;
 	}
 	
 	public int getHealth() {
