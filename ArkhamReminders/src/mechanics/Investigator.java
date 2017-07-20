@@ -16,9 +16,9 @@ public class Investigator
 	private final int maxHealth;
 	private final int maxSanity;
 	private final int initMoney;
-	private byte blessing = 0;
+	private byte blessing = 1;
 	
-	private boolean retain = false;
+	private boolean retain = true;
 	private boolean loan = false;
 	private boolean canLoan = true;
 	private boolean silverTwilight = false;

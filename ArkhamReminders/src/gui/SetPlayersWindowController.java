@@ -21,7 +21,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 import mechanics.*;
 
 public final class SetPlayersWindowController 
@@ -103,6 +102,20 @@ public final class SetPlayersWindowController
 		
 		fw.setInvestigators(dummy);
 		fw.setAncientOne(this.ancientTField.getText());
+		
+		Parent root = null;
+		try {
+			root = FXMLLoader.load(getClass().getResource("Arkham_Main.fxml"));
+		} catch (IOException e) 
+		{
+			System.out.println(".fxml not found");
+		}
+		
+		System.out.println(this.getClass().getResource("Arkham_Main.fxml"));
+		this.scene.setRoot(root);
+		
+		//MainWindowController mainWindow = new MainWindowController(fw, this.bPane.getScene());
+		//mainWindow.arrangeWindow();
 	}
 	
 	private void backPressed(ActionEvent event)

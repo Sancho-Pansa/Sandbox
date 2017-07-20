@@ -1,7 +1,9 @@
 */bin/
+!*/bin/*.fxml
 /.metadata/
 */.gitignore
 /.recommenders/
+*.accdb
 */.*
 !*/.project
 !*/.classpath

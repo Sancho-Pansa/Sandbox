@@ -35,7 +35,6 @@ public class Framework
 		{
 			cll.push(new Investigator(x));
 		}
-		System.out.println(cll.pop().getMaxHealth());
 	}
 	
 	public void setAncientOne(String name)
