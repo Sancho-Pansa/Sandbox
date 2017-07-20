@@ -1,4 +1,4 @@
-package main;
+package gui;
 
 import java.util.ArrayList;
 
@@ -48,6 +48,7 @@ public class GUIClass extends Application
 	private GridPane innerPane2;
 	
 	private BorderPane upkeepPane;
+	private GridPane upkeepTop;
 	private BorderPane movementPane;
 	private BorderPane encounterPane;
 	private BorderPane otherWorldPane;
@@ -90,11 +91,11 @@ public class GUIClass extends Application
 		primaryStage.show();
 		this.primaryStage = primaryStage;
 	}
-	
+	/*
 	public static void main(String[] args)
 	{
 		GUIClass.launch(args);
-	}
+	}*/
 	
 	private void inputInvestigatorsWindow()
 	{
@@ -144,21 +145,35 @@ public class GUIClass extends Application
 	
 	private void createMainWindow()
 	{
+		upkeepPane = new BorderPane();
+		upkeepTop = new GridPane();
+		label  = new Label("Some text  ");
+		upkeepPane.setCenter(label);
+		
 		bigBox = new HBox();
-		bPane = new BorderPane();
+		bPane = upkeepPane;
 		this.arrangeAccordion();
 		
 		sPane = new SplitPane(accord, bPane);
+		sPane.setDividerPositions(0.4);
+
+        accord.maxWidthProperty().bind(sPane.widthProperty().multiply(0.4));
+        accord.minWidthProperty().bind(sPane.widthProperty().multiply(0.4));
+		
 		this.arrangeRightBorderPane();
 		
 		bigBox.getChildren().add(sPane);
 		bigBox.setBorder(new Border((new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1, 0, 0, 0)))));
 		
-		
-		
 		scene = new Scene(bigBox, WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+	
+	private void arrangePhases()
+	{
+		this.upkeepPane = new BorderPane();
+		
 	}
 	
 	private void arrangeRightBorderPane()
@@ -175,8 +190,6 @@ public class GUIClass extends Application
 		investPane = new TitledPane("Сыщики", innerPane1);
 		ancientPane = new TitledPane("Древний", innerPane2);
 		accord = new Accordion(investPane, ancientPane);
-		
-		accord.setMinWidth(300);
 	}
 	
 	private void PlayerNumEntered(ActionEvent e)

@@ -18,6 +18,11 @@ public class Investigator
 	private final int initMoney;
 	private byte blessing = 0;
 	
+	private boolean retain = false;
+	private boolean loan = false;
+	private boolean canLoan = true;
+	private boolean silverTwilight = false;
+	
 	private int health;
 	private int sanity;
 	private int money;

@@ -1,0 +1,120 @@
+package gui;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import mechanics.*;
+
+public final class SetPlayersWindowController 
+{
+	private Framework fw;
+	private Scene scene;
+	
+	private BorderPane bPane;
+	private GridPane gPane;
+	
+	private Label label;
+	private TextField ancientTField;
+	
+	private ArrayList<Label> ARLabel;
+	private ArrayList<TextField> ARField;
+	
+	private Button okButton;
+	private Button backButton;
+	
+	public SetPlayersWindowController(Framework fw, Scene scene)
+	{
+		this.fw = fw;
+		this.scene = scene;
+	}
+	
+	public final void arrangeWindow()
+	{
+		bPane = new BorderPane();
+		gPane = new GridPane();
+		
+		label = new Label("Введите имена сыщиков и Древнего");
+		label.setFont(new Font(24));
+		label.setPadding(new Insets(20, 20, 40, 300));
+		
+		ARLabel = new ArrayList<>();
+		ARField = new ArrayList<>();
+		ancientTField = new TextField("Йог-Сотот");
+		 
+		for(int i = 0; i < fw.getPlayers(); i++)
+		{
+			ARLabel.add(new Label("Игрок " + (i + 1) + ": "));
+			gPane.add(ARLabel.get(i), 0, i);
+			//TODO Delete string in constructor after tests!
+			TextField dummy = new TextField("Аманда");
+			ARField.add(dummy);
+			gPane.add(ARField.get(i), 1, i);
+		}		
+
+		gPane.add(new Label("Древний: "), 0, fw.getPlayers() + 10);
+		gPane.add(ancientTField, 1, fw.getPlayers() + 10);
+		
+		okButton = new Button("OK");
+		backButton = new Button("Назад");
+		okButton.setOnAction(this::playerNamesEntered);
+		backButton.setOnAction(this::backPressed);
+		gPane.add(backButton, 0, fw.getPlayers() + 11);
+		gPane.add(okButton, 1, fw.getPlayers() + 11);
+		
+		gPane.setVgap(10);
+		gPane.setHgap(20);
+		gPane.setAlignment(Pos.TOP_CENTER);
+		
+		bPane.setTop(label);
+		bPane.setCenter(gPane);
+		bPane.setBorder(new Border((new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1, 0, 0, 0)))));
+		
+		scene.setRoot(bPane);
+	}
+	
+	private void playerNamesEntered(ActionEvent event)
+	{
+		ArrayList<String> dummy = new ArrayList<>();
+		for(TextField x : this.ARField)
+		{
+			if(x.getText().isEmpty() || this.ancientTField.getText().isEmpty())
+				return;
+			dummy.add(x.getText());
+		}
+		
+		fw.setInvestigators(dummy);
+		fw.setAncientOne(this.ancientTField.getText());
+	}
+	
+	private void backPressed(ActionEvent event)
+	{
+		Parent root = null;
+		try {
+			root = FXMLLoader.load(getClass().getResource("Arkham_Welcome.fxml"));
+		} catch (IOException e) 
+		{
+			System.out.println(".fxml was not found");
+			e.printStackTrace();
+		}
+		this.scene.setRoot(root);
+	}
+}
