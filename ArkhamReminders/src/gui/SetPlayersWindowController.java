@@ -109,6 +109,7 @@ public final class SetPlayersWindowController
 			Parent root = loader.load();
 			MainWindowController stub = loader.getController();
 			stub.setFramework(this.fw);
+			stub.upkeepPhase();
 			this.scene.setRoot(root);
 		} catch (IOException e) 
 		{

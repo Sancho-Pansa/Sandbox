@@ -14,6 +14,7 @@ public class Framework
 	private int monsterLimit;
 	private int outskirtsLimit;
 	private int terrorLevel = 0;
+	private int doomTrack = 0;
 	
 	public Framework(int players)
 	{
@@ -78,5 +79,13 @@ public class Framework
 
 	public int getOutskirtsLimit() {
 		return outskirtsLimit;
+	}
+
+	public int getDoomTrack() {
+		return doomTrack;
+	}
+
+	public void setDoomTrack(int doomTrack) {
+		this.doomTrack = doomTrack;
 	}
 }

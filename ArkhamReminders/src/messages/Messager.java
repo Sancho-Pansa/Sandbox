@@ -1,9 +1,12 @@
 package messages;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Messager 
 {
+	public static final String[] PHASE_LIST = {"Фаза передышки", "Фаза движения", "Контакты в Аркхэме", "Контакты в Иных мирах", "Миф"};
+	
 	public static String getMessage(String enter)
 	{
 		switch (enter)

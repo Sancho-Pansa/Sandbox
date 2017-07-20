@@ -16,7 +16,7 @@ public class Investigator
 	private final int maxHealth;
 	private final int maxSanity;
 	private final int initMoney;
-	private byte blessing = 1;
+	private byte blessing = 0;
 	
 	private boolean retain = true;
 	private boolean loan = false;
@@ -86,5 +86,17 @@ public class Investigator
 	public boolean isCursed()
 	{
 		return this.blessing == -1;
+	}
+	
+	public void bless()
+	{
+		if(this.blessing < 1)
+			this.blessing++;
+	}
+	
+	public void curse()
+	{
+		if(this.blessing > -1)
+			this.blessing--;
 	}
 }
