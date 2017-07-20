@@ -1,18 +1,11 @@
 package gui;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import mechanics.*;
 
-public class WelcomeWindowController implements Initializable
+public class WelcomeWindowController
 {	
 	private Framework fw;
 	
@@ -22,15 +15,8 @@ public class WelcomeWindowController implements Initializable
 	@FXML
 	private Button playerNumBtn;
 	
-	
-	@Override
-	public void initialize(URL location, ResourceBundle resources)
-	{
-		
-	}
-	
 	@FXML
-	private void PlayerNumEntered() throws Exception
+	private void playerNumEntered() throws Exception
 	{
 		if(this.numField.getText().isEmpty())
 			return;

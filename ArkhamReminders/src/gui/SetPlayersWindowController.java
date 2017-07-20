@@ -57,6 +57,7 @@ public final class SetPlayersWindowController
 		
 		ARLabel = new ArrayList<>();
 		ARField = new ArrayList<>();
+		//TODO Delete this field later!
 		ancientTField = new TextField("Йог-Сотот");
 		 
 		for(int i = 0; i < fw.getPlayers(); i++)
@@ -103,16 +104,16 @@ public final class SetPlayersWindowController
 		fw.setInvestigators(dummy);
 		fw.setAncientOne(this.ancientTField.getText());
 		
-		Parent root = null;
 		try {
-			root = FXMLLoader.load(getClass().getResource("Arkham_Main.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Arkham_Main.fxml"));
+			Parent root = loader.load();
+			MainWindowController stub = loader.getController();
+			stub.setFramework(this.fw);
+			this.scene.setRoot(root);
 		} catch (IOException e) 
 		{
 			System.out.println(".fxml not found");
 		}
-		
-		System.out.println(this.getClass().getResource("Arkham_Main.fxml"));
-		this.scene.setRoot(root);
 		
 		//MainWindowController mainWindow = new MainWindowController(fw, this.bPane.getScene());
 		//mainWindow.arrangeWindow();
@@ -126,7 +127,6 @@ public final class SetPlayersWindowController
 		} catch (IOException e) 
 		{
 			System.out.println(".fxml was not found");
-			e.printStackTrace();
 		}
 		this.scene.setRoot(root);
 	}

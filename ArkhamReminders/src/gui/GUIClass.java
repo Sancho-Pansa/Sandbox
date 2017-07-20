@@ -103,7 +103,7 @@ public class GUIClass extends Application
 		gPane = new GridPane();
 		
 		label = new Label("¬ведите имена сыщиков и ƒревнего");
-		label.setFont(new Font(24));
+		label.setFont(new Font(32));
 		label.setPadding(new Insets(20, 20, 40, 500));
 		
 		ARLabel = new ArrayList<>();

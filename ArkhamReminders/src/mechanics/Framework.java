@@ -1,15 +1,19 @@
 package mechanics;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+import list.CircularLinkedList;
 
-import essence.CircularLinkedList;
 
 public class Framework 
 {
 	private int players;
 	private CircularLinkedList<Investigator> cll;
 	private AncientOne ancientOne;
+	
+	private int gateLimit;
+	private int monsterLimit;
+	private int outskirtsLimit;
+	private int terrorLevel = 0;
 	
 	public Framework(int players)
 	{
@@ -20,12 +24,16 @@ public class Framework
 	{
 		return players;
 	}
-
+	
 	public void setPlayers(int players)
 	{
 		if(players <= 0 || players > 8)
 			throw new IllegalArgumentException("Incorrect number of players");
 		this.players = players;
+		
+		this.monsterLimit = this.players + 3;
+		this.outskirtsLimit = 8 - this.players;
+		this.gateLimit = 9 - (int) (Math.ceil((this.players) / 2.0));
 	}
 	
 	public void setInvestigators(ArrayList<String> names)
@@ -45,5 +53,30 @@ public class Framework
 	public AncientOne getAncientOne()
 	{
 		return this.ancientOne;
+	}
+	
+	public CircularLinkedList<Investigator> getCList()
+	{
+		return this.cll;
+	}
+
+	public int getTerrorLevel() {
+		return terrorLevel;
+	}
+
+	public void setTerrorLevel(int terrorLevel) {
+		this.terrorLevel = terrorLevel;
+	}
+
+	public int getGateLimit() {
+		return gateLimit;
+	}
+
+	public int getMonsterLimit() {
+		return monsterLimit;
+	}
+
+	public int getOutskirtsLimit() {
+		return outskirtsLimit;
 	}
 }
