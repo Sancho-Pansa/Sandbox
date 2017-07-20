@@ -7,7 +7,7 @@ import mechanics.*;
 
 public class WelcomeWindowController
 {	
-	private Framework fw;
+	private Framework fw; 
 	
 	@FXML
 	private TextField numField;

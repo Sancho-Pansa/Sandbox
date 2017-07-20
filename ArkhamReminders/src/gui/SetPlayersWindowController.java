@@ -102,7 +102,7 @@ public final class SetPlayersWindowController
 		}
 		
 		fw.setInvestigators(dummy);
-		fw.setAncientOne(this.ancientTField.getText());
+		fw.setAncientOne(this.ancientTField.getText()); 
 		
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Arkham_Main.fxml"));

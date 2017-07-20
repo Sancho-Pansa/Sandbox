@@ -16,7 +16,7 @@ public final class MainWindowController
 	private Label dummyLabel;
 	
 	public void setFramework(Framework fw)
-	{
+	{ 
 		this.fw = fw;
 		this.cll = fw.getCList();
 	}
