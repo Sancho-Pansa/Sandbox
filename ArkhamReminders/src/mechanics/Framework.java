@@ -44,6 +44,13 @@ public class Framework
 		{
 			cll.push(new Investigator(x));
 		}
+		cll = cll.revert();
+		
+		//TODO Delete this later!
+		cll.getAt(2).getContents().bless();
+		cll.getAt(3).getContents().curse();
+		cll.getAt(1).getContents().setRetain();
+		cll.getAt(3).getContents().setRetain();
 	}
 	
 	public void setAncientOne(String name)

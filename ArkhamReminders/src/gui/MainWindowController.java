@@ -1,14 +1,11 @@
 package gui;
 
 import list.CircularLinkedList;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,45 +16,35 @@ public final class MainWindowController
 {
 	private Framework fw;
 	private byte phaseCounter = 0;
+	private Label tipLabel;
 	
 	private CircularLinkedList<Investigator> cll;
 	
 	@FXML
-	private Label phaseLabel;	
+	private Label phaseLabel;
 	
 	@FXML
-	private BorderPane upkeepPane;//, movementPane, encounterPane, otherWorldsPane, mythosPane;
+	private BorderPane upkeepPane;
 
+	public void setFramework(Framework fw)
+	{ 
+		this.fw = fw;
+		this.cll = fw.getCList();
+		this.tipLabel = new Label();
+		tipLabel.setWrapText(true);
+	}
+	
 	public void upkeepPhase()
 	{
-		cll.getAt(1).getContents().bless();
-		cll.getAt(3).getContents().bless();
-		Button btn = new Button("Sign");
-		GridPane gPane = new GridPane();
-		gPane.setAlignment(Pos.CENTER);
-		gPane.setHgap(25);
-		gPane.setVgap(10);
-		int row = 0;
-		for(int i = 0; i < cll.size(); i++)
-		{
-			Investigator current = cll.getContent(cll.getAt(i));
-			if(current.isBlessed())
-			{
-				gPane.add(new Label(current.getName() + ": "), 0, row);
-				gPane.add(new Label(Messager.getMessage("Bless")), 1, row);
-				gPane.add(new Button("Foo"), 2, row);
-				row++;
-			}
-		}
-		
+		GridPane gPane = this.upkeepArrange();
 		upkeepPane.setCenter(gPane);
-		//this.upkeepPane.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		HBox hb = new HBox();
+		upkeepPane.setBottom(hb);
 	}
 	
 	public void movementPhase()
 	{
-		this.upkeepPane.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
-		upkeepPane.setCenter(new Label("a"));
+		
 	}
 	
 	public void encounterPhase()
@@ -76,13 +63,91 @@ public final class MainWindowController
 		this.upkeepPane.setBackground(new Background(new BackgroundFill(Color.MAGENTA, CornerRadii.EMPTY, Insets.EMPTY)));
 	}
 	
-	public void setFramework(Framework fw)
-	{ 
-		this.fw = fw;
-		this.cll = fw.getCList();
-		this.arrangeButtons();
-	}
 
+	private GridPane upkeepArrange()
+	{
+		GridPane gPane = new GridPane();
+		gPane.setAlignment(Pos.CENTER);
+		gPane.setHgap(25);
+		gPane.setVgap(10);
+		int row = 0;
+		for(int i = 0; i < cll.size(); i++)
+		{
+			Investigator current = cll.getContent(cll.getAt(i));
+			if(current.isBlessed())
+			{
+				gPane.add(new Label(current.getName() + ": "), 0, row);
+				Label dummy = new Label(Messager.getMessage("Blessed"));
+				dummy.setWrapText(true);
+				dummy.setMinWidth(400);
+				dummy.setMaxWidth(400);
+				gPane.add(dummy, 1, row);
+				Button btn = new Button("Снять");
+				btn.setOnAction(new ChangeState(i, "Curse"));
+				gPane.add(btn, 2, row);
+				row++;
+			}
+		}
+		
+		row += 2;
+		for(int i = 0; i < cll.size(); i++)
+		{
+			Investigator current = cll.getAt(i).getContents();
+			if(current.isCursed())
+			{
+				gPane.add(new Label(current.getName() + ": "), 0, row);
+				Label dummy = new Label(Messager.getMessage("Cursed"));
+				dummy.setWrapText(true);
+				dummy.setMinWidth(400);
+				dummy.setMaxWidth(400);
+				gPane.add(dummy, 1, row);
+				Button btn = new Button("Снять");
+				btn.setOnAction(new ChangeState(i, "Bless"));
+				gPane.add(btn, 2, row);
+				row++;
+			}
+		}
+		
+		row += 2;
+		for(int i = 0; i < cll.size(); i++)
+		{
+			Investigator current = cll.getAt(i).getContents();
+			if(current.hasRetain())
+			{
+				gPane.add(new Label(current.getName() + ": "), 0, row);
+				Label dummy = new Label(Messager.getMessage("Retain"));
+				dummy.setWrapText(true);
+				dummy.setMinWidth(400);
+				dummy.setMaxWidth(400);
+				gPane.add(dummy, 1, row);
+				Button btn = new Button("Убрать");
+				btn.setOnAction(new ChangeState(i, "Retain"));
+				gPane.add(btn, 2, row);
+				row++;
+			}
+		}
+		row += 2;
+		for(int i = 0; i < cll.size(); i++)
+		{
+			Investigator current = cll.getAt(i).getContents();
+			if(current.hasRetain())
+			{
+				gPane.add(new Label(current.getName() + ": "), 0, row);
+				Label dummy = new Label(Messager.getMessage("Loan"));
+				dummy.setWrapText(true);
+				dummy.setMinWidth(400);
+				dummy.setMaxWidth(400);
+				gPane.add(dummy, 1, row);
+				Button btn = new Button("Нищеброд");
+				btn.setOnAction(new ChangeState(i, "Loan"));
+				gPane.add(btn, 2, row);
+				row++;
+			}
+		}
+		gPane.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
+		return gPane;		
+	}
+	
 	@FXML
 	public void nextPhase()
 	{
@@ -110,8 +175,56 @@ public final class MainWindowController
 			phaseCounter = -1;
 	}
 	
-	private void arrangeButtons()
+	private class ChangeState implements EventHandler<ActionEvent>
 	{
+		private int num;
+		private String stateName;
+		
+		public ChangeState(int num, String stateName)
+		{
+			this.num = num;
+			this.stateName = stateName;
+		}
+		
+		@Override
+		public void handle(ActionEvent event)
+		{
+			switch(this.stateName)
+			{
+			case "Curse":
+				cll.getAt(num).getContents().curse();
+				break;
+			case "Bless":
+				cll.getAt(num).getContents().bless();
+				break;
+			case "Retain":
+				cll.getAt(num).getContents().discardRetain();
+				break;
+			case "Loan":
+				cll.getAt(num).getContents().discardLoan();
+				break;
+			}			
+		}
+	}
+	
+	private class bringTips implements EventHandler<ActionEvent>
+	{
+		private String tipCode;
+		
+		public bringTips(String tipCode)
+		{
+			this.tipCode = tipCode;
+		}
+
+		@Override
+		public void handle(ActionEvent event) 
+		{
+			switch(tipCode)
+			{
+			case "Retreat":
+				break;
+			}
+		}
 		
 	}
 	

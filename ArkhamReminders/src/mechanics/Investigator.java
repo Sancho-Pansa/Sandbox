@@ -18,7 +18,7 @@ public class Investigator
 	private final int initMoney;
 	private byte blessing = 0;
 	
-	private boolean retain = true;
+	private boolean retain = false;
 	private boolean loan = false;
 	private boolean canLoan = true;
 	private boolean silverTwilight = false;
@@ -77,6 +77,16 @@ public class Investigator
 	public int getInitMoney() {
 		return initMoney;
 	}
+	
+	public void setRetain()
+	{
+		this.retain = true;
+	}
+	
+	public void setLoan()
+	{
+		this.loan = true;
+	}
 
 	public boolean isBlessed()
 	{
@@ -86,6 +96,21 @@ public class Investigator
 	public boolean isCursed()
 	{
 		return this.blessing == -1;
+	}
+	
+	public boolean hasRetain()
+	{
+		return this.retain;
+	}
+	
+	public boolean hasLoan()
+	{
+		return this.loan;
+	}
+	
+	public boolean isTwilight()
+	{
+		return this.silverTwilight;
 	}
 	
 	public void bless()
@@ -98,5 +123,40 @@ public class Investigator
 	{
 		if(this.blessing > -1)
 			this.blessing--;
+	}
+	
+	public void damage()
+	{
+		if(this.health > 0)
+			this.health--;
+	}
+	
+	public void heal()
+	{
+		if(this.health < this.maxHealth)
+			this.health++;
+	}
+	
+	public void restoreSanity()
+	{
+		if(this.sanity < this.maxSanity)
+			this.sanity++;
+	}
+	
+	public void decreaseSanity()
+	{
+		if(this.sanity > 0)
+			this.sanity--;
+	}
+	
+	public void discardRetain()
+	{
+		this.retain = false;
+	}
+	
+	public void discardLoan()
+	{
+		this.loan = false;
+		this.canLoan = false;
 	}
 }
