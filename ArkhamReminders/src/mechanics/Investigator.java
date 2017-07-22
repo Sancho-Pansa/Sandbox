@@ -22,6 +22,7 @@ public class Investigator
 	private boolean loan = false;
 	private boolean canLoan = true;
 	private boolean silverTwilight = false;
+	private boolean sheriff = false;
 	
 	private int health;
 	private int sanity;
@@ -87,6 +88,11 @@ public class Investigator
 	{
 		this.loan = true;
 	}
+	
+	public void setSheriff()
+	{
+		this.sheriff = true;
+	}
 
 	public boolean isBlessed()
 	{
@@ -98,6 +104,11 @@ public class Investigator
 		return this.blessing == -1;
 	}
 	
+	public boolean isSheriff()
+	{
+		return this.sheriff;
+	}
+	
 	public boolean hasRetain()
 	{
 		return this.retain;
@@ -106,6 +117,11 @@ public class Investigator
 	public boolean hasLoan()
 	{
 		return this.loan;
+	}
+	
+	public boolean canLoan()
+	{
+		return this.canLoan;
 	}
 	
 	public boolean isTwilight()
@@ -123,6 +139,11 @@ public class Investigator
 	{
 		if(this.blessing > -1)
 			this.blessing--;
+	}
+	
+	public void setTwilight()
+	{
+		this.silverTwilight = true;
 	}
 	
 	public void damage()

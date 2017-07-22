@@ -9,12 +9,22 @@ public class Framework
 	private int players;
 	private CircularLinkedList<Investigator> cll;
 	private AncientOne ancientOne;
+	private boolean AncientAwaken = false;
 	
+	
+	private int clueNum = 5;
+	private int gateNum = 0;
+	private int monstersOnMap = 0;
+	private int outskirtsMonsters = 0;
 	private int gateLimit;
 	private int monsterLimit;
 	private int outskirtsLimit;
 	private int terrorLevel = 0;
 	private int doomTrack = 0;
+	
+	// Victory conditions
+	private int elderSignsOnMap = 0;
+	
 	
 	public Framework(int players)
 	{
@@ -45,17 +55,13 @@ public class Framework
 			cll.push(new Investigator(x));
 		}
 		cll = cll.revert();
-		
-		//TODO Delete this later!
-		cll.getAt(2).getContents().bless();
-		cll.getAt(3).getContents().curse();
-		cll.getAt(1).getContents().setRetain();
-		cll.getAt(3).getContents().setRetain();
 	}
 	
 	public void setAncientOne(String name)
 	{
 		this.ancientOne = new AncientOne(name);
+		if(name.equals("Хастур"))
+			this.clueNum = 8;
 	}
 	
 	public AncientOne getAncientOne()
@@ -63,6 +69,10 @@ public class Framework
 		return this.ancientOne;
 	}
 	
+	public int getClueNum() {
+		return clueNum;
+	}
+
 	public CircularLinkedList<Investigator> getCList()
 	{
 		return this.cll;
@@ -84,6 +94,10 @@ public class Framework
 		return monsterLimit;
 	}
 
+	public int getMonstersOnMap() {
+		return monstersOnMap;
+	}
+
 	public int getOutskirtsLimit() {
 		return outskirtsLimit;
 	}
@@ -94,5 +108,100 @@ public class Framework
 
 	public void setDoomTrack(int doomTrack) {
 		this.doomTrack = doomTrack;
+	}
+	
+	public int getGateNum()
+	{
+		return this.gateNum;
+	}
+	
+	public int getElderSignsOnMap() {
+		return elderSignsOnMap;
+	}
+
+	public void createGate(boolean isThereGate)
+	{
+		if(isThereGate)
+			for(int i = 0; i < players || i < this.gateNum; i++)
+				this.spawnMonster();
+		else
+		{
+			this.gateNum++;
+			this.addDoom();
+			if(players > 4)
+			{
+				this.spawnMonster();
+			}
+			this.spawnMonster();
+		}
+	}
+	
+	public void closeGate()
+	{
+		this.gateNum--;
+	}
+	
+	public void sealGate(boolean hasElderSign)
+	{
+		if(hasElderSign)
+		{
+			this.gateNum--;
+			this.elderSignsOnMap++;
+			this.doomTrack--;
+		}
+		else
+		{
+			this.gateNum--;
+			this.elderSignsOnMap++;
+		}
+		System.out.println(this.gateNum);
+		System.out.println(this.doomTrack);
+	}
+	
+	public void spawnMonster()
+	{
+		this.monstersOnMap++;
+		if(this.monstersOnMap >= this.monsterLimit)
+			this.addOutskirtsMonster();
+		System.out.println(this.monstersOnMap);
+	}
+	public void killMonster()
+	{
+		this.monstersOnMap--;
+	}
+	
+	public void addOutskirtsMonster()
+	{
+		this.outskirtsMonsters++;
+		if(this.outskirtsMonsters >= this.outskirtsLimit && this.terrorLevel < 10)
+		{
+			this.outskirtsMonsters = 0;
+			this.addTerrorLevel();
+		}
+	}
+	
+	public void substrOutskirts()
+	{
+		this.outskirtsMonsters--;
+	}
+	
+	public void addTerrorLevel()
+	{
+		this.terrorLevel++;
+		if(this.terrorLevel >= 10)
+			this.addDoom();
+			
+	}
+	
+	public void reduceTerrorLevel()
+	{
+		this.terrorLevel--;
+	}
+	
+	public void addDoom()
+	{
+		this.doomTrack++;
+		if(this.doomTrack >= this.ancientOne.getAwakening())
+			this.AncientAwaken = true;
 	}
 }
