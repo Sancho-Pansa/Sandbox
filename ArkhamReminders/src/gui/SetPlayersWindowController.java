@@ -59,6 +59,7 @@ public final class SetPlayersWindowController
 		ARField = new ArrayList<>();
 		//TODO Delete this field later!
 		ancientTField = new TextField("Йог-Сотот");
+		ancientTField.setPrefWidth(250);
 		 
 		for(int i = 0; i < fw.getPlayers(); i++)
 		{
@@ -66,6 +67,7 @@ public final class SetPlayersWindowController
 			gPane.add(ARLabel.get(i), 0, i);
 			//TODO Delete string in constructor after tests!
 			TextField dummy = new TextField("Аманда");
+			dummy.setPrefWidth(250);
 			ARField.add(dummy);
 			gPane.add(ARField.get(i), 1, i);
 		}		
@@ -74,11 +76,12 @@ public final class SetPlayersWindowController
 		gPane.add(ancientTField, 1, fw.getPlayers() + 10);
 		
 		okButton = new Button("OK");
+		okButton.setMinWidth(250);
 		backButton = new Button("Назад");
 		okButton.setOnAction(this::playerNamesEntered);
 		backButton.setOnAction(this::backPressed);
-		gPane.add(backButton, 0, fw.getPlayers() + 11);
-		gPane.add(okButton, 1, fw.getPlayers() + 11);
+		gPane.add(backButton, 0, fw.getPlayers() + 15);
+		gPane.add(okButton, 1, fw.getPlayers() + 15);
 		
 		gPane.setVgap(10);
 		gPane.setHgap(20);

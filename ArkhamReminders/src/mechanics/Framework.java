@@ -9,8 +9,11 @@ public class Framework
 	private int players;
 	private CircularLinkedList<Investigator> cll;
 	private AncientOne ancientOne;
-	private boolean AncientAwaken = false;
 	
+	private boolean AncientAwaken = false;
+	private boolean mapLimitBreached = false;
+	private boolean outskirtsLimitBreached = false;
+	private boolean terrorRaised = false;
 	
 	private int clueNum = 5;
 	private int gateNum = 0;
@@ -20,7 +23,8 @@ public class Framework
 	private int monsterLimit;
 	private int outskirtsLimit;
 	private int terrorLevel = 0;
-	private int doomTrack = 0;
+	private int doomTrack = 1;
+	private int addedMonsters;
 	
 	// Victory conditions
 	private int elderSignsOnMap = 0;
@@ -64,6 +68,11 @@ public class Framework
 			this.clueNum = 8;
 	}
 	
+	public void cancelOutskirtsLimit()
+	{
+		this.outskirtsLimit = (int) Double.POSITIVE_INFINITY;
+	}
+	
 	public AncientOne getAncientOne()
 	{
 		return this.ancientOne;
@@ -79,7 +88,7 @@ public class Framework
 	}
 
 	public int getTerrorLevel() {
-		return terrorLevel;
+		return this.terrorLevel;
 	}
 
 	public void setTerrorLevel(int terrorLevel) {
@@ -96,6 +105,15 @@ public class Framework
 
 	public int getMonstersOnMap() {
 		return monstersOnMap;
+	}
+
+	public int getMonsteronOutskirts()
+	{
+		return this.outskirtsMonsters;
+	}
+	
+	public int getAddedMonsters() {
+		return addedMonsters;
 	}
 
 	public int getOutskirtsLimit() {
@@ -118,16 +136,57 @@ public class Framework
 	public int getElderSignsOnMap() {
 		return elderSignsOnMap;
 	}
+	
+	public boolean isMapLimit()
+	{
+		if(this.mapLimitBreached)
+		{
+			this.mapLimitBreached = false;
+			return true;
+		}
+		else
+			return this.mapLimitBreached;
+	}
+	
+	public boolean isOutskirtsLimit()
+	{
+		if(this.outskirtsLimitBreached)
+		{
+			this.outskirtsLimitBreached = false;
+			return true;
+		}
+		return this.outskirtsLimitBreached;
+	}
+	
+	public boolean isTerrorRaised()
+	{
+		if(this.terrorRaised)
+		{
+			this.terrorRaised = false;
+			return true;
+		}
+		return this.terrorRaised;
+	}
+	
+	public boolean isAwaken()
+	{
+		return this.AncientAwaken;
+	}
 
 	public void createGate(boolean isThereGate)
 	{
+		this.addedMonsters = 0;
 		if(isThereGate)
 			for(int i = 0; i < players || i < this.gateNum; i++)
+			{
+				this.addedMonsters++;
 				this.spawnMonster();
+			}
 		else
 		{
 			this.gateNum++;
-			this.addDoom();
+			if(gateNum > this.gateLimit)
+				this.AncientAwaken = true;
 			if(players > 4)
 			{
 				this.spawnMonster();
@@ -138,7 +197,8 @@ public class Framework
 	
 	public void closeGate()
 	{
-		this.gateNum--;
+		if(this.gateNum > 0)
+			this.gateNum--;
 	}
 	
 	public void sealGate(boolean hasElderSign)
@@ -154,15 +214,17 @@ public class Framework
 			this.gateNum--;
 			this.elderSignsOnMap++;
 		}
-		System.out.println(this.gateNum);
-		System.out.println(this.doomTrack);
 	}
 	
 	public void spawnMonster()
 	{
+		this.addedMonsters = 0;
 		this.monstersOnMap++;
-		if(this.monstersOnMap >= this.monsterLimit)
+		if(this.monstersOnMap > this.monsterLimit)
+		{
+			this.mapLimitBreached = true;
 			this.addOutskirtsMonster();
+		}
 		System.out.println(this.monstersOnMap);
 	}
 	public void killMonster()
@@ -173,14 +235,16 @@ public class Framework
 	public void addOutskirtsMonster()
 	{
 		this.outskirtsMonsters++;
-		if(this.outskirtsMonsters >= this.outskirtsLimit && this.terrorLevel < 10)
+		if(this.outskirtsMonsters > this.outskirtsLimit && this.terrorLevel < 10)
 		{
 			this.outskirtsMonsters = 0;
 			this.addTerrorLevel();
+			this.outskirtsLimitBreached = true;
+			System.out.println("Limit breached");
 		}
 	}
 	
-	public void substrOutskirts()
+	public void minusOutskirtsMonster()
 	{
 		this.outskirtsMonsters--;
 	}
@@ -188,12 +252,12 @@ public class Framework
 	public void addTerrorLevel()
 	{
 		this.terrorLevel++;
+		this.terrorRaised = true;
 		if(this.terrorLevel >= 10)
 			this.addDoom();
-			
 	}
 	
-	public void reduceTerrorLevel()
+	public void minusTerrorLevel()
 	{
 		this.terrorLevel--;
 	}
@@ -203,5 +267,11 @@ public class Framework
 		this.doomTrack++;
 		if(this.doomTrack >= this.ancientOne.getAwakening())
 			this.AncientAwaken = true;
+	}
+	
+	public void minusDoom()
+	{
+		if(this.doomTrack >= 0)
+			this.doomTrack--;
 	}
 }

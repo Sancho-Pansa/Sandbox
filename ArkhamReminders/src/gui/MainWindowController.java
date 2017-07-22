@@ -16,7 +16,7 @@ import messages.Messager;
 public final class MainWindowController
 {
 	private Framework fw;
-	private byte phaseCounter = 0;
+	private byte phaseCounter = 3;
 	private Label tipLabel;
 	private Investigator sheriff = null;
 	
@@ -58,12 +58,14 @@ public final class MainWindowController
 	
 	public void otherWorldPhase()
 	{
-		this.upkeepPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+		this.encounterArrange();
 	}
 	
 	public void mythosPhase()
 	{
-		this.upkeepPane.setBackground(new Background(new BackgroundFill(Color.MAGENTA, CornerRadii.EMPTY, Insets.EMPTY)));
+		this.encounterArrange();
+		PaintMythosEventsList event = new PaintMythosEventsList();
+		event.handle(new ActionEvent());
 	}
 	
 
@@ -74,8 +76,6 @@ public final class MainWindowController
 		gPane.setHgap(15);
 		gPane.setVgap(10);
 		
-		if(sheriff == null)
-			sheriff = this.findSheriff();
 		
 		int row = 0;
 		for(int i = 0; i < cll.size(); i++)
@@ -172,7 +172,7 @@ public final class MainWindowController
 		changeBars.setOnAction(action);
 		changeBars.setMinWidth(165);
 		
-		mythosBars = new Button("Врата / монстры");
+		mythosBars = new Button("События Мифоса");
 		PaintMythosEventsList mythosaction = new PaintMythosEventsList();
 		mythosBars.setOnAction(mythosaction);
 		mythosBars.setMinWidth(165);
@@ -264,26 +264,18 @@ public final class MainWindowController
 		botPane.add(monsterFeats, 3, 0);
 		
 		botPane.add(this.changeBars, 0, 1);
-		botPane.add(gateClose, 1, 1);
-		botPane.add(gateSeal, 2, 1);
+		botPane.add(this.mythosBars, 1, 1);
+		botPane.add(gateClose, 2, 1);
+		botPane.add(gateSeal, 3, 1);
 		
-		botPane.add(this.mythosBars, 3, 1);
 		
 		this.upkeepPane.setCenter(gPane);
 		this.upkeepPane.setBottom(botPane);
 	}
 	
-	private Investigator findSheriff()
+	private void investigatorPaneArrange()
 	{
-		for(int i = 0; i < cll.size(); i++)
-		{
-			if(cll.getAt(i).getContents().isSheriff())
-			{
-				return cll.getAt(i).getContents();
-			}
-		}
 		
-		return null;
 	}
 	
 	private Button createTipButton(String code, String label)
@@ -300,7 +292,7 @@ public final class MainWindowController
 		MythosEvents mythosEvent = new MythosEvents(code, object);
 		Button butt = new Button(label);
 		butt.setOnAction(mythosEvent);
-		butt.setMinWidth(165);
+		butt.setMinWidth(200);
 		return butt;
 	}
 	
@@ -316,15 +308,28 @@ public final class MainWindowController
 		botPane.setHgap(5);
 		botPane.setVgap(5);
 		botPane.setAlignment(Pos.BOTTOM_CENTER);
-		botPane.setMinHeight(50);
+		botPane.setMinHeight(75);
 		
 		return botPane;
+	}
+	
+	private void changeBotPane(Label dummy)
+	{
+		dummy.setWrapText(true);
+		GridPane botPane = createbotPane();
+		botPane.setAlignment(Pos.CENTER);
+		botPane.add(dummy, 0, 0);
+		GridPane.setMargin(dummy, new Insets(0, 40, 0, 40));
+		upkeepPane.setBottom(botPane);
+		
 	}
 	
 	@FXML
 	public void nextPhase()
 	{
 		phaseCounter++;
+		if(phaseCounter <= -1)
+			this.phaseCounter = 4;
 		this.phaseLabel.setText(Messager.PHASE_LIST[phaseCounter]);
 		switch(phaseCounter)
 		{
@@ -346,6 +351,7 @@ public final class MainWindowController
 		}
 		if(phaseCounter >= 4)
 			phaseCounter = -1;
+		
 	}
 	
 	private class ChangeState implements EventHandler<ActionEvent>
@@ -390,12 +396,14 @@ public final class MainWindowController
 		{
 			this.tipCode = tipCode;
 			tipLabel.setWrapText(true);
+			backBtn.setMinWidth(100);
 			backBtn.setOnAction(new EventHandler<ActionEvent>()
 			{
 				@Override
 				public void handle(ActionEvent event) 
 				{
-					movementArrange();
+					phaseCounter--;
+					nextPhase();
 				}
 				
 			});
@@ -414,7 +422,6 @@ public final class MainWindowController
 			vBox.setBorder(createStandartBorder());
 			upkeepPane.setCenter(vBox);
 		}
-		
 	}
 	
 	private class PaintInvestigatorsList implements EventHandler<ActionEvent>
@@ -423,6 +430,7 @@ public final class MainWindowController
 		
 		public PaintInvestigatorsList()
 		{
+			backBtn.setMinWidth(535);
 			backBtn.setOnAction(new EventHandler<ActionEvent>()
 			{
 				@Override
@@ -433,6 +441,14 @@ public final class MainWindowController
 				}
 				
 			});
+		}
+		
+		private Button createButton(String label, String bar, Investigator invest)
+		{
+			Button butt = new Button(label);
+			butt.setMinWidth(130);
+			butt.setOnAction(new PaintPlusMinus(bar, invest));
+			return butt;
 		}
 		
 		@Override
@@ -441,32 +457,33 @@ public final class MainWindowController
 			GridPane gPane = new GridPane();
 			gPane.setAlignment(Pos.CENTER);
 			gPane.setHgap(5);
-			gPane.setVgap(10);
+			gPane.setVgap(5);
 			
 			for(int i = 0; i < cll.size(); i++)
 			{
-				Label name = new Label(cll.getAt(i).getContents().getName() + ": ");
-				Button incHealth = new Button("Здоровье+");
-				incHealth.setMinWidth(50);
-				incHealth.setOnAction(new ChangeHealthSanity("health", "increase", cll.getAt(i).getContents()));
-				Button decHealth = new Button("Здоровье-");
-				decHealth.setMinWidth(50);
-				decHealth.setOnAction(new ChangeHealthSanity("health", "decrease", cll.getAt(i).getContents()));
-				Button incSanity = new Button("Разум+");
-				incSanity.setMinWidth(50);
-				incSanity.setOnAction(new ChangeHealthSanity("sanity", "increase", cll.getAt(i).getContents()));
-				Button decSanity = new Button("Разум-");
-				decSanity.setMinWidth(50);
-				decSanity.setOnAction(new ChangeHealthSanity("sanity", "decrease", cll.getAt(i).getContents()));
+				Investigator dummy = cll.getAt(i).getContents();
+				Label name = new Label(dummy.getName() + ": ");
+				Button health = this.createButton("Здоровье", "health", dummy);
+				Button sanity = this.createButton("Разум", "sanity", dummy);
+				Button maxHealth = this.createButton("Макс. здоровье", "maxhealth", dummy);
+				Button maxSanity = this.createButton("Макс. разум", "maxsanity", dummy);
+				Button bless = this.createButton("Судьба", "bless", dummy);
+				Button retain = this.createButton("Гонорар", "retain", dummy);
+				Button loan = this.createButton("Заем", "loan", dummy);
+				Button sheriffBtn = this.createButton("Стать шерифом", "sheriff", dummy);
 				
-				gPane.add(name, 0, i);
-				gPane.add(incHealth, 1, i);
-				gPane.add(incSanity, 2, i);
-				gPane.add(decHealth, 3, i);
-				gPane.add(decSanity, 4, i);
+				gPane.add(name, 0, 2 * i);
+				gPane.add(health, 1, 2 * i);
+				gPane.add(sanity, 2, 2 * i);
+				gPane.add(maxHealth, 3, 2 * i);
+				gPane.add(maxSanity, 4, 2 * i);
+				gPane.add(bless, 1, 2 * i + 1);
+				gPane.add(retain, 2, 2 * i + 1);
+				gPane.add(loan, 3, 2 * i + 1);
+				gPane.add(sheriffBtn, 4, 2 * i + 1);
 			}
-			
-			gPane.add(backBtn, 2, cll.size() + 1);
+			gPane.add(backBtn, 1, cll.size() * 2);
+			GridPane.setColumnSpan(backBtn, 4);
 			
 			gPane.setBorder(createStandartBorder());
 			upkeepPane.setCenter(gPane);
@@ -474,40 +491,158 @@ public final class MainWindowController
 		
 	}
 	
-	private class ChangeHealthSanity implements EventHandler<ActionEvent>
+	private class PaintPlusMinus implements EventHandler<ActionEvent>
 	{
 		private String barName;
-		private String action;
 		private Investigator invest;
+		private Button plus;
+		private Button minus;
+		private Button backBtn;
 		
-		public ChangeHealthSanity(String barName, String action, Investigator invest)
+		public PaintPlusMinus(String barName, Investigator invest)
 		{
 			this.barName = barName;
-			this.action = action;
 			this.invest = invest;
+			
+			plus = new Button("+");
+			plus.setMinWidth(100);
+			plus.setOnAction(new PlusMinus(this.barName, true, this.invest));
+			
+			minus = new Button("-");
+			minus.setMinWidth(100);
+			minus.setOnAction(new PlusMinus(this.barName, false, this.invest));
+			
+			backBtn = new Button("Назад");
+			backBtn.setMinWidth(225);
+			backBtn.setOnAction(new PaintInvestigatorsList());
 		}
 		
 		@Override
 		public void handle(ActionEvent event) 
 		{
-			if(action.equals("increase"))
+			GridPane gPane = new GridPane();
+			gPane.setAlignment(Pos.CENTER);
+			gPane.setHgap(25);
+			gPane.setVgap(100);
+			gPane.add(minus, 0, 0);
+			gPane.add(plus, 1, 0);
+			gPane.add(backBtn, 0, 1);
+			GridPane.setColumnSpan(backBtn, 2);
+			
+			gPane.setBorder(createStandartBorder());
+			
+			upkeepPane.setCenter(gPane);
+		}
+	}
+	
+	private class PlusMinus implements EventHandler<ActionEvent>
+	{
+		private String stat;
+		private boolean plus;
+		private Investigator invest;
+		
+		public PlusMinus(String stat, boolean plus, Investigator invest)
+		{
+			this.stat = stat;
+			this.plus = plus;
+			this.invest = invest;
+		}
+		
+		private void checkVitals()
+		{
+			if((this.invest.getSanity() <= 0 && this.invest.getHealth() <= 0) || invest.getMaxHealth() <= 0 || invest.getMaxSanity() <= 0)
 			{
-				if(barName.equals("health"))
-					invest.heal();
-				if(barName.equals("sanity"))
-					invest.restoreSanity();
+				this.invest.killInvest();
+				Label dummy = new Label("Сыщик " + invest.getName() + " cожран.");
+				dummy.setFont(new Font(24));
+				dummy.setTextFill(Color.RED);
+				changeBotPane(dummy);
+				return;
+			}
+				
+			if(this.invest.getHealth() <= 0)
+			{
+				this.invest.discardRetain();
+				this.invest.heal();
+				Label dummy = new Label("Сыщик " + invest.getName() + " потерял сознание. "
+						+ " Этот сыщик должен отдать половину вещей на выбор (округление вниз), "
+						+ "а также карты Гонорара, а затем переместиться в больницу св. Марии.\n"
+						+ "Если он в Ином мире, он потерян во времени и пространстве.");
+				changeBotPane(dummy);
 			}
 			
-			if(action.equals("decrease"))
+			if(this.invest.getSanity() <= 0)
 			{
-				if(barName.equals("health"))
-					invest.damage();
-				if(barName.equals("sanity"))
-				{
-					invest.decreaseSanity();
-				}
+				this.invest.discardRetain();
+				this.invest.addSanity();
+				Label dummy = new Label("Сыщик " + invest.getName() + " упал в обморок. "
+						+ " Этот сыщик должен отдать половину вещей на выбор (округление вниз), "
+						+ "а также карты Гонорара, а затем переместиться в Аркхэмскую лечебницу.\n"
+						+ "Если он в Ином мире, он потерян во времени и пространстве.");
+				changeBotPane(dummy);
 			}
+			
 		}
+		
+		
+		
+		public void handle(ActionEvent event)
+		{
+			switch(this.stat)
+			{
+			case "health":
+				if(plus)
+					this.invest.heal();
+				else
+				{
+					this.invest.damage();
+				}
+				break;
+			case "sanity":
+				if(plus)
+					this.invest.addSanity();
+				else
+					this.invest.minusSanity();
+				break;
+			case "maxhealth":
+				if(!plus)
+					this.invest.minusMaxHealth();
+				break;
+			case "maxsanity":
+				if(!plus)
+					this.invest.minusMaxSanity();	
+				break;
+			case "bless":
+				if(plus)
+					this.invest.bless();
+				else
+					this.invest.curse();
+				break;
+			case "retain":
+				if(plus)
+					this.invest.setRetain();
+				else
+					this.invest.discardRetain();
+				break;
+			case "loan":
+				if(plus)
+					this.invest.setLoan();
+				if(plus)
+					this.invest.discardLoan();
+				break;
+			case "sheriff":
+				if(plus)
+				{
+					this.invest.setSheriff();
+					sheriff = this.invest;
+				}
+				else
+					this.invest.setTwilight();
+				break;
+			}
+			this.checkVitals();
+		}
+		
 	}
 	
 	private class PaintMythosEventsList implements EventHandler<ActionEvent>
@@ -516,6 +651,7 @@ public final class MainWindowController
 		
 		public PaintMythosEventsList()
 		{
+			backBtn.setMinWidth(430);
 			backBtn.setOnAction(new EventHandler<ActionEvent>()
 			{
 				@Override
@@ -533,20 +669,27 @@ public final class MainWindowController
 		{
 			GridPane gPane = new GridPane();
 			gPane.setAlignment(Pos.CENTER);
-			gPane.setHgap(20);
+			gPane.setHgap(30);
 			gPane.setVgap(10);
-			
-			gPane.add(createMythosEventsButton("gate", "open", "Открыть Врата"), 0, 0);
-			gPane.add(createMythosEventsButton("gate", "surge", "Нашествие монстров"), 1, 0);
-			gPane.add(createMythosEventsButton("gate", "close", "Закрыть Врата"), 0, 1);
-			gPane.add(createMythosEventsButton("gate", "seal", "Запечатать Врата"), 1, 1);
-			gPane.add(createMythosEventsButton("gate", "eldersign", "Знак Древних"), 0, 2);
-			
-			gPane.add(createMythosEventsButton("monster", "spawn", "Добавить монстра"), 0, 3);
-			gPane.add(createMythosEventsButton("monster", "kill", "Убить монстра"), 1, 3);
 
-			gPane.add(backBtn, 1, 5);
+			gPane.add(createMythosEventsButton("doom", "minus", "Снизить безысходность"), 0, 0);
+			gPane.add(createMythosEventsButton("doom", "plus", "Увеличить безысходность"), 1, 0);
+			gPane.add(createMythosEventsButton("terror", "minus", "Снизить ужас"), 0, 1);
+			gPane.add(createMythosEventsButton("terror", "plus", "Увеличить ужас"), 1, 1);
+			gPane.add(createMythosEventsButton("gate", "open", "Открыть Врата"), 0, 2);
+			gPane.add(createMythosEventsButton("gate", "surge", "Нашествие монстров"), 1, 2);
+			gPane.add(createMythosEventsButton("gate", "close", "Закрыть Врата"), 0, 3);
+			gPane.add(createMythosEventsButton("gate", "seal", "Запечатать Врата"), 1, 3);
+			Button elderSign = createMythosEventsButton("gate", "eldersign", "Знак Древних");
+			elderSign.setMinWidth(430);
+			gPane.add(elderSign, 0, 4);
+			GridPane.setColumnSpan(elderSign, 2);
 			
+			gPane.add(createMythosEventsButton("monster", "spawn", "Добавить монстра"), 0, 6);
+			gPane.add(createMythosEventsButton("monster", "kill", "Убить монстра"), 1, 6);
+
+			gPane.add(backBtn, 0, 12);
+			GridPane.setColumnSpan(backBtn, 2);
 			gPane.setBorder(createStandartBorder());
 			upkeepPane.setCenter(gPane);
 		}
@@ -564,21 +707,98 @@ public final class MainWindowController
 			this.mythos = mythos;
 		}
 		
+		private void aftermathCheck()
+		{
+			String report = new String("");
+			
+			if(fw.isAwaken())
+			{
+				Label dummy = new Label(fw.getAncientOne().getName() + " пробудился!");
+				dummy.setFont(new Font(24));
+				dummy.setTextFill(Color.RED);
+				changeBotPane(dummy);
+				return;
+			}
+			
+			if(fw.getElderSignsOnMap() >= 6)
+			{
+				Label dummy = new Label("Вы победили!\nНа карте есть 6 Знаков Древних, а значит Аркхэм "
+						+ "отгорожен от посягательств Мифоса навсегда.");
+				dummy.setFont(new Font(20));
+				dummy.setTextFill(Color.GREEN);
+				changeBotPane(dummy);
+				return;
+			}
+			
+			if(action.equals("surge"))
+			{
+				int monsters = 0;
+				if(fw.getPlayers() > fw.getGateNum())
+					monsters = fw.getPlayers();
+				else
+					monsters = fw.getGateNum();
+				report = "Нашествие монстров! Распределите по открытым вратам " + monsters + " монстров.\n";
+			}
+			
+			report += (fw.getAncientOne().getAwakening() - fw.getDoomTrack()) + " осталось до пробуждения Древнего.\n";
+			
+			if(fw.isMapLimit())
+				report += "Достигнут лимит монстров на карте, следующих кладите на Окраины.\n";
+			
+			if(fw.isOutskirtsLimit())
+				report += "Достигнут предел окраин. Уберите всех монстров с окраин в пул (в том числе с Неба).\n";
+			
+			if(fw.isTerrorRaised())
+				report += "Уровень ужаса повысился. Уберите из колоды спутников 1 карту.\n";
+			
+			if(fw.getTerrorLevel() >= 3)
+			{
+				report += "Закрыт магазин";
+				if(fw.getTerrorLevel() >= 6)
+				{
+					report += ", лавка древностей";
+					if(fw.getTerrorLevel() >= 9)
+						report += " и \"Старинная лавка волшбы\"";
+				}
+				report += ".\n";
+				System.out.println(report);
+			}
+			
+			if(fw.getTerrorLevel() >= 10)
+			{
+				fw.cancelOutskirtsLimit();
+				report += "Уровень ужаса достигнут максимума. Верните всех монстров с окраин в пул."
+						+ " Лимит монстров на окраинах больше не действует.\n";
+			}
+			
+			Label dummy = new Label(report);
+			changeBotPane(dummy);
+			
+		}
+		
 		@Override
 		public void handle(ActionEvent event)
 		{
 			if(mythos.equals("gate"))
 			{
-				if(action.equals("close"))
+				switch(action)
+				{
+				case "close":
 					fw.closeGate();
-				if(action.equals("seal"))
+					break;
+				case "seal":
 					fw.sealGate(false);
-				if(action.equals("eldersign"))
+					break;
+				case "eldersign":	
 					fw.sealGate(true);
-				if(action.equals("open"))
+					break;
+				case "open":
 					fw.createGate(false);
-				if(action.equals("surge"))
+					break;
+				case "surge":	
 					fw.createGate(true);
+					break;
+				}
 			}
 			
 			if(mythos.equals("monster"))
@@ -588,8 +808,29 @@ public final class MainWindowController
 				if(action.equals("kill"))
 					fw.killMonster();
 			}
+			
+			if(mythos.equals("doom"))
+			{
+				if(action.equals("plus"))
+					fw.addDoom();
+				if(action.equals("minus"))
+					fw.minusDoom();
+			}
+			
+			if(mythos.equals("terror"))
+			{
+				if(action.equals("plus"))
+				{
+					fw.addTerrorLevel();
+					System.out.println(fw.getTerrorLevel());
+				}
+				if(action.equals("minus"))
+					fw.minusTerrorLevel();
+				
+			}
+			
+			aftermathCheck();
 		}
-		
 	}
 	
 }

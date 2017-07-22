@@ -13,10 +13,11 @@ public class Investigator
 	public final static AccessDBConnect ACCDB = new AccessDBConnect();
 	
 	private final String name;
-	private final int maxHealth;
-	private final int maxSanity;
+	private int maxHealth;
+	private int maxSanity;
 	private final int initMoney;
 	private byte blessing = 0;
+	private boolean killed = false;
 	
 	private boolean retain = false;
 	private boolean loan = false;
@@ -104,6 +105,11 @@ public class Investigator
 		return this.blessing == -1;
 	}
 	
+	public boolean isKilled()
+	{
+		return this.killed;
+	}
+	
 	public boolean isSheriff()
 	{
 		return this.sheriff;
@@ -158,16 +164,32 @@ public class Investigator
 			this.health++;
 	}
 	
-	public void restoreSanity()
+	public void addSanity()
 	{
 		if(this.sanity < this.maxSanity)
 			this.sanity++;
 	}
 	
-	public void decreaseSanity()
+	public void minusSanity()
 	{
 		if(this.sanity > 0)
 			this.sanity--;
+	}
+	
+	public void minusMaxHealth()
+	{
+		if(this.maxHealth > 0)
+			this.maxHealth--;
+		if(this.health > this.maxHealth)
+			this.health = this.maxHealth;
+	}
+	
+	public void minusMaxSanity()
+	{
+		if(this.maxSanity > 0)
+			this.maxSanity--;
+		if(this.maxSanity < this.sanity)
+			this.sanity = this.maxSanity;
 	}
 	
 	public void discardRetain()
@@ -179,5 +201,10 @@ public class Investigator
 	{
 		this.loan = false;
 		this.canLoan = false;
+	}
+	
+	public void killInvest()
+	{
+		this.killed = true;
 	}
 }
