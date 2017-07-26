@@ -1,7 +1,13 @@
 package sql;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.sql.*;
+import java.util.Scanner;
+import gui.*;
 
 /**
  * This class creates connection with MS Access database on selected address
@@ -11,7 +17,6 @@ import java.sql.*;
  * @author SanchoPansa
  *
  */
-//TODO Связать с помощью Мавена(?)
 public class AccessDBConnect 
 {
 	private Connection con;
@@ -20,14 +25,20 @@ public class AccessDBConnect
 	
 	public AccessDBConnect()
 	{
-		final File file = new File("resources\\ArkhamDB.accdb");
 		try {
-			this.con = DriverManager.getConnection("jdbc:ucanaccess://" + file.toString());
-			this.s = con.createStatement();			
+			//final File file = new File("resources\\ArkhamDB.accdb");
+			//if(!file.exists())
+				//throw new FileNotFoundException("DB lost");
+			File dummy = new File("/D:/Java & Git/Sandbox/ArkhamReminders/src/ArkhamDB.accdb");
+			System.out.println(dummy.exists());
+			String pathDB = FxmlGUI.getArg();
+			this.con = DriverManager.getConnection("jdbc:ucanaccess://" + pathDB);
+			this.s = con.createStatement();
+			System.out.println("Established");
 		} catch (SQLException e) 
 		{
 			System.out.println("Something somewhere had gone terribly wrong");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

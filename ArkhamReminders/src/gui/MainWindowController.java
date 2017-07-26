@@ -2,9 +2,11 @@ package gui;
 
 import list.CircularLinkedList;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ public final class MainWindowController
 	private byte phaseCounter = 3;
 	private Label tipLabel;
 	private Investigator sheriff = null;
+	private byte firstTurn = 0;
 	
 	private Button changeBars;
 	private Button mythosBars;
@@ -31,6 +34,12 @@ public final class MainWindowController
 	@FXML
 	private BorderPane upkeepPane;
 	
+	@FXML
+	private SplitPane sPane;
+	
+	@FXML
+	private TitledPane investPane, ancientPane;
+	
 	//private GridPane botPane;
 
 	public void setFramework(Framework fw)
@@ -42,28 +51,42 @@ public final class MainWindowController
 	
 	public void upkeepPhase()
 	{
+		if(firstTurn < 2)
+		{
+			firstTurn++;
+			
+		}
+		else
+			cll.scroll();
 		GridPane gPane = this.upkeepArrange();
 		upkeepPane.setCenter(gPane);
+		this.investigatorPaneArrange();
+		//sPane.setBackground(new Picture().generateRandomUpkeep());
 	}
 	
 	public void movementPhase()
 	{
 		this.movementArrange();
+		this.investigatorPaneArrange();
+		//sPane.setBackground(new Picture().generateRandomUpkeep());
 	}
 	
 	public void encounterPhase()
 	{
 		this.encounterArrange();
+		this.investigatorPaneArrange();
 	}
 	
 	public void otherWorldPhase()
 	{
 		this.encounterArrange();
+		this.investigatorPaneArrange();
 	}
 	
 	public void mythosPhase()
 	{
 		this.encounterArrange();
+		this.investigatorPaneArrange();
 		PaintMythosEventsList event = new PaintMythosEventsList();
 		event.handle(new ActionEvent());
 	}
@@ -275,7 +298,73 @@ public final class MainWindowController
 	
 	private void investigatorPaneArrange()
 	{
+		GridPane gPane = new GridPane();
+		gPane.setHgap(5);
+		gPane.setVgap(5);
+		int row = 0;
+		for(int i = 0; i < cll.size(); i++)
+		{
+			Investigator dummy = cll.getAt(i).getContents();
+			Label name = new Label(dummy.getName() + ": ");
+			gPane.add(name, 0, row);
+			if(dummy.isKilled())
+			{
+				Label killed = new Label("Сожран");
+				killed.setTextFill(Color.RED);
+				gPane.add(killed, 1, row);
+				row++;
+				continue;
+			}
+			Label health = new Label(new String("Здоровье: \t" + dummy.getHealth() + " / " + dummy.getMaxHealth()));
+			gPane.add(health, 1, row);
+			row++;
+			Label sanity = new Label(new String("Рассудок: \t" + dummy.getSanity() + " / " + dummy.getMaxSanity()));
+			gPane.add(sanity, 1, row);
+			row++;
+			if(dummy.isBlessed())
+			{
+				Label blessing = new Label("Благословлен");
+				gPane.add(blessing, 1, row);
+				row++;
+			}
+			if(dummy.isCursed())
+			{
+				Label cursed = new Label("Проклят");
+				gPane.add(cursed, 1, row);
+				row++;
+			}
+		}
 		
+		this.investPane.setContent(gPane);
+	}
+	
+	private void ancientPaneArrange()
+	{
+		AncientOne mythos = fw.getAncientOne();
+		GridPane gPane = new GridPane();
+		gPane.setAlignment(Pos.TOP_RIGHT);
+		gPane.setVgap(10);
+		Label name = new Label(mythos.getName());
+		name.setTextAlignment(TextAlignment.CENTER);
+		name.setFont(new Font(24));
+		gPane.add(name, 0, 0);
+		gPane.add(new Label("Безысходность: " + fw.getDoomTrack() + " / " + mythos.getAwakening()), 0, 1);
+		gPane.add(new Label("Уровень ужаса: " + fw.getTerrorLevel() + " / 10"), 0, 2);
+		gPane.add(new Label("Монстры в Аркхеме: " + fw.getMonstersOnMap() + " / " + fw.getMonsterLimit()), 0, 3);
+		gPane.add(new Label("Монстры на окраинах: " + fw.getMonsteronOutskirts() + " / " + fw.getOutskirtsLimit()), 0, 4);
+		gPane.add(new Label("Открытые Врата: " + fw.getGateNum() + " / " + fw.getGateLimit()), 0, 5);
+		gPane.add(new Label("Знаков Древних расставлено: " + fw.getElderSignsOnMap() + " / 6" ), 0, 6);
+		Label followers = new Label(mythos.getFollowers());
+		followers.setWrapText(true);
+		gPane.add(followers, 0, 7);
+		Label featName = new Label(mythos.getFeatName() + ": ");
+		featName.setFont(new Font(18));
+		gPane.add(featName, 0, 8);
+		Label desc = new Label(mythos.getFeatDesc());
+		desc.setWrapText(true);
+		gPane.add(desc, 0, 9);
+		
+		this.ancientPane.setContent(gPane);
 	}
 	
 	private Button createTipButton(String code, String label)
@@ -298,7 +387,7 @@ public final class MainWindowController
 	
 	private Border createStandartBorder()
 	{
-		return new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3)));
+		return new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0)));
 
 	}
 	
@@ -309,6 +398,7 @@ public final class MainWindowController
 		botPane.setVgap(5);
 		botPane.setAlignment(Pos.BOTTOM_CENTER);
 		botPane.setMinHeight(75);
+		botPane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		return botPane;
 	}
@@ -341,17 +431,21 @@ public final class MainWindowController
 			break;
 		case 2:
 			this.encounterPhase();
+			sPane.setBackground(new Picture().generateRandomEncounter());
 			break;
 		case 3:
 			this.otherWorldPhase();
+			sPane.setBackground(new Picture().generateRandomOtherWorld());
 			break;
 		case 4:
+			fw.addDoom();
 			this.mythosPhase();
+			sPane.setBackground(new Picture().generateRandomMythos());
 			break;
 		}
 		if(phaseCounter >= 4)
 			phaseCounter = -1;
-		
+		this.ancientPaneArrange();
 	}
 	
 	private class ChangeState implements EventHandler<ActionEvent>
@@ -420,6 +514,7 @@ public final class MainWindowController
 			vBox.setPadding(new Insets(0, 20, 0, 20));
 			vBox.getChildren().add(this.backBtn);
 			vBox.setBorder(createStandartBorder());
+			vBox.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 			upkeepPane.setCenter(vBox);
 		}
 	}
@@ -464,9 +559,9 @@ public final class MainWindowController
 				Investigator dummy = cll.getAt(i).getContents();
 				Label name = new Label(dummy.getName() + ": ");
 				Button health = this.createButton("Здоровье", "health", dummy);
-				Button sanity = this.createButton("Разум", "sanity", dummy);
+				Button sanity = this.createButton("Рассудок", "sanity", dummy);
 				Button maxHealth = this.createButton("Макс. здоровье", "maxhealth", dummy);
-				Button maxSanity = this.createButton("Макс. разум", "maxsanity", dummy);
+				Button maxSanity = this.createButton("Макс. рассудок", "maxsanity", dummy);
 				Button bless = this.createButton("Судьба", "bless", dummy);
 				Button retain = this.createButton("Гонорар", "retain", dummy);
 				Button loan = this.createButton("Заем", "loan", dummy);
@@ -581,10 +676,8 @@ public final class MainWindowController
 						+ "Если он в Ином мире, он потерян во времени и пространстве.");
 				changeBotPane(dummy);
 			}
-			
+			investigatorPaneArrange();
 		}
-		
-		
 		
 		public void handle(ActionEvent event)
 		{
@@ -610,7 +703,8 @@ public final class MainWindowController
 				break;
 			case "maxsanity":
 				if(!plus)
-					this.invest.minusMaxSanity();	
+					this.invest.minusMaxSanity();
+				System.out.println("foo");
 				break;
 			case "bless":
 				if(plus)
@@ -627,7 +721,7 @@ public final class MainWindowController
 			case "loan":
 				if(plus)
 					this.invest.setLoan();
-				if(plus)
+				if(!plus)
 					this.invest.discardLoan();
 				break;
 			case "sheriff":
@@ -740,7 +834,7 @@ public final class MainWindowController
 				report = "Нашествие монстров! Распределите по открытым вратам " + monsters + " монстров.\n";
 			}
 			
-			report += (fw.getAncientOne().getAwakening() - fw.getDoomTrack()) + " осталось до пробуждения Древнего.\n";
+			report += (fw.getAncientOne().getAwakening() - fw.getDoomTrack()) + " раундов до пробуждения Древнего.\n";
 			
 			if(fw.isMapLimit())
 				report += "Достигнут лимит монстров на карте, следующих кладите на Окраины.\n";
@@ -761,7 +855,6 @@ public final class MainWindowController
 						report += " и \"Старинная лавка волшбы\"";
 				}
 				report += ".\n";
-				System.out.println(report);
 			}
 			
 			if(fw.getTerrorLevel() >= 10)
@@ -773,7 +866,7 @@ public final class MainWindowController
 			
 			Label dummy = new Label(report);
 			changeBotPane(dummy);
-			
+			ancientPaneArrange();
 		}
 		
 		@Override
@@ -830,6 +923,56 @@ public final class MainWindowController
 			}
 			
 			aftermathCheck();
+		}
+	}
+	
+	private class Picture
+	{
+		private final Image[] UPKEEP = {
+			new Image("Upkeep-01.jpg", 1050, 800, false, false),
+			new Image("Upkeep-02.jpg", 1050, 800, false, false),
+			new Image("Upkeep-03.jpg", 1050, 800, false, false),
+		};
+		
+		private final Image[] ENCOUNTER = {
+				new Image("Contact-01.jpg", 1050, 800, false, false),
+				new Image("Contact-02.jpg", 1050, 800, false, false),
+				new Image("Contact-03.jpg", 1050, 800, false, false),
+			};
+		private final Image[] OTHERWORLD = {
+				new Image("OtherWorlds-01.jpg", 1050, 800, false, false),
+				new Image("OtherWorlds-02.jpg", 1050, 800, false, false),
+				new Image("OtherWorlds-03.jpg", 1050, 800, false, false),
+			};
+		private final Image[] MYTHOS = {
+				new Image("Mythos-01.jpg", 1050, 800, false, false),
+				new Image("Mythos-02.jpg", 1050, 800, false, false),
+				new Image("Mythos-03.jpg", 1050, 800, false, false),
+			};
+		
+		public final Background generateRandomUpkeep()
+		{
+			BackgroundImage bi = new BackgroundImage(this.UPKEEP[(int) (Math.random() * 1000 % 3)], BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+			return new Background(bi);
+		}
+		
+		public final Background generateRandomEncounter()
+		{
+			BackgroundImage bi = new BackgroundImage(this.ENCOUNTER[(int) (Math.random() * 1000 % 3)], BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+			System.out.println((int) (Math.random() * 1000 % 3));
+			return new Background(bi);
+		}
+		
+		public final Background generateRandomOtherWorld()
+		{
+			BackgroundImage bi = new BackgroundImage(this.OTHERWORLD[(int) (Math.random() * 1000 % 3)], BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+			return new Background(bi);
+		}
+		
+		public final Background generateRandomMythos()
+		{
+			BackgroundImage bi = new BackgroundImage(this.MYTHOS[(int) (Math.random() * 1000 % 3)], BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+			return new Background(bi);
 		}
 	}
 	

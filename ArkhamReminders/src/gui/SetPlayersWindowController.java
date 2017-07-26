@@ -12,16 +12,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import mechanics.*;
+
+/**
+ * This class realizes window, where user enters names of Investigators and Ancient Ones.
+ * This window does not have .fxml base file, because of large number of dynamically adjusted elements
+ * (e.g. number of text areas, which directly depends on entered previously number). 
+ * @author SanchoPansa
+ */
 
 public final class SetPlayersWindowController 
 {
@@ -40,12 +42,21 @@ public final class SetPlayersWindowController
 	private Button okButton;
 	private Button backButton;
 	
+	/**
+	 * Constructs class. It needs Framework class, which will be filled with entered data, and instance
+	 * of Scene class, on which previous window was painted.
+	 * @param fw
+	 * @param scene
+	 */
 	public SetPlayersWindowController(Framework fw, Scene scene)
 	{
 		this.fw = fw;
 		this.scene = scene;
 	}
 	
+	/**
+	 * This function paints the window and arranges all elements on it.
+	 */
 	public final void arrangeWindow()
 	{
 		bPane = new BorderPane();
@@ -57,8 +68,8 @@ public final class SetPlayersWindowController
 		
 		ARLabel = new ArrayList<>();
 		ARField = new ArrayList<>();
-		//TODO Delete this field later!
-		ancientTField = new TextField("Йог-Сотот");
+
+		ancientTField = new TextField();
 		ancientTField.setPrefWidth(250);
 		 
 		for(int i = 0; i < fw.getPlayers(); i++)
@@ -90,6 +101,8 @@ public final class SetPlayersWindowController
 		bPane.setTop(label);
 		bPane.setCenter(gPane);
 		bPane.setBorder(new Border((new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1, 0, 0, 0)))));
+		BackgroundImage bi = new BackgroundImage(new Image("Arkham Horror-01.jpg", 1050, 800, false, false), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+		bPane.setBackground(new Background(bi));
 		
 		scene.setRoot(bPane);
 	}

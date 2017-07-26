@@ -5,7 +5,6 @@ import sql.AccessDBConnect;
 /**
  * This class describes the main monster - one of the Ancient Ones
  * @author SanchoPansa
- *
  */
 
 public class AncientOne
@@ -13,6 +12,10 @@ public class AncientOne
 	private String name;
 	private byte awakening;
 	private String followers;
+	private String featName;
+	private String featDesc;
+	
+	
 	private final AccessDBConnect ACCDB = new AccessDBConnect();  
 	
 	public AncientOne(String name)
@@ -25,6 +28,9 @@ public class AncientOne
 	{
 		this.name = name;
 		this.awakening = new Byte(ACCDB.getAncientField("Awakening", name));
+		this.followers = ACCDB.getAncientField("FollowerBonuses", name);
+		this.featDesc = ACCDB.getAncientField("FeatureDesc", name);
+		this.featName = ACCDB.getAncientField("FeatureName", name);
 	}
 	
 	public String getName() 
@@ -41,6 +47,16 @@ public class AncientOne
 	public String getFollowers()
 	{
 		return followers;
+	}
+
+
+	public String getFeatName() {
+		return featName;
+	}
+
+
+	public String getFeatDesc() {
+		return featDesc;
 	}
 
 }
