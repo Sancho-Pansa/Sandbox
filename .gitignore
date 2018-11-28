@@ -1,6 +1,7 @@
 */bin/
 /.metadata/
 */.gitignore
+/.recommenders/
 !*/.project
 
 # Compiled class file
