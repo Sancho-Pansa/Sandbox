@@ -44,27 +44,36 @@ public class Complex
 	}
 
 	@Override
-	public boolean equals(Object obj)
-	{
+	public String toString() {
+		return "Complex [" + Re + " + " + Im + "i]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(Im);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(Re);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		
 		Complex other = (Complex) obj;
-		if (Double.doubleToLongBits(Im) == Double.doubleToLongBits(other.getIm()) && 
-				Double.doubleToLongBits(Re) == Double.doubleToLongBits(other.getRe()))
-			return true;
-		return false;
-	}
-	
-	
-
-	@Override
-	public String toString() {
-		return "Complex [" + Re + " + " + Im + "i]";
+		if (Double.doubleToLongBits(Im) != Double.doubleToLongBits(other.Im))
+			return false;
+		if (Double.doubleToLongBits(Re) != Double.doubleToLongBits(other.Re))
+			return false;
+		return true;
 	}
 
 	public static Complex addition(Complex a, Complex b)
